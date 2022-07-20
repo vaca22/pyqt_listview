@@ -25,7 +25,8 @@ class ListWidgetDemo(QListWidget):
 
     def getItem(self,lstItem):
         print(self.currentItem().text())
-
+        print(lstItem.text())
+        print(self.currentRow())
 
 if __name__ == '__main__':
     print('PyCharm')
