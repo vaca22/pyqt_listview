@@ -14,9 +14,17 @@ class ListWidgetDemo(QListWidget):
 
 
         self.addItem(jan)
-        self.addItem(QListWidgetItem(jan))
+       # self.addItem(QListWidgetItem(jan))
         self.addItem(feb)
         self.addItem(mar)
+
+        self.addItems([jan,feb])
+
+
+        self.itemDoubleClicked.connect(self.getItem)
+
+    def getItem(self,lstItem):
+        print(self.currentItem().text())
 
 
 if __name__ == '__main__':
