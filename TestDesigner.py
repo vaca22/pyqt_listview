@@ -12,6 +12,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_Dialog(object):
+
+    def on_pushrefresh_clicked(self):
+        print("pushrefresh button was clicked")
+
+    def on_export_clicked(self):
+        print("export button was clicked")
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(454, 399)
@@ -25,9 +31,12 @@ class Ui_Dialog(object):
         self.pushrefresh = QtWidgets.QPushButton(Dialog)
         self.pushrefresh.setGeometry(QtCore.QRect(10, 40, 91, 24))
         self.pushrefresh.setObjectName("pushrefresh")
+        self.pushrefresh.clicked.connect(self.on_pushrefresh_clicked)
+
         self.exportButton = QtWidgets.QPushButton(Dialog)
         self.exportButton.setGeometry(QtCore.QRect(330, 350, 75, 24))
         self.exportButton.setObjectName("exportButton")
+        self.exportButton.clicked.connect(self.on_export_clicked)
         self.progress = QtWidgets.QLabel(Dialog)
         self.progress.setGeometry(QtCore.QRect(20, 350, 151, 20))
         self.progress.setObjectName("progress")
