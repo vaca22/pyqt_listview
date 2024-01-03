@@ -100,7 +100,8 @@ class Ui_Dialog(object):
         self.progress.setText(_translate("Dialog", "当前导出进度：0%"))
         self.label.setText(_translate("Dialog", "开始时间"))
         self.label_2.setText(_translate("Dialog", "结束时间"))
-        self.beginTimeView.setDateTime(QDateTime.currentDateTime())
+        #7 days ago
+        self.beginTimeView.setDateTime(QDateTime.currentDateTime().addDays(-7))
         self.endTimeView.setDateTime(QDateTime.currentDateTime())
 
     def exportData(self):
