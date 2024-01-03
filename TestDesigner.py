@@ -10,6 +10,7 @@ import requests
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from cookies_convert import cookie_dict_to_str
 from order_detail import order_detail
 from order_list import get_order_list
 from query_login import query_login
@@ -129,15 +130,30 @@ class Ui_Dialog(object):
         self.custom_cookie = ""
         if os.path.exists('cookies.txt'):
             with open('cookies.txt', 'r') as f:
-                self.custom_cookie = f.read()
+                self.custom_cookie = cookie_dict_to_str(f.read())
         print(self.custom_cookie)
         # print type
         if not test_login(self.custom_cookie):
-            url = "http://vaca.vip:8569/getqr"
+            url = "https://channels.weixin.qq.com/shop-faas/mmecnodelogin/getLoginQrCode?token=&lang=zh_CN&login_appid="
 
-            response = requests.post(url)
+            headers = {
+                "Host": "channels.weixin.qq.com",
+                "Connection": "keep-alive",
+                "sec-ch-ua": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+                "Accept": "application/json, text/plain, */*",
+                "sec-ch-ua-mobile": "?0",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "sec-ch-ua-platform": '"Windows"',
+                "Sec-Fetch-Site": "same-origin",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Dest": "empty",
+                "Referer": "https://channels.weixin.qq.com/shop",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Accept-Language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,ja-JP;q=0.6,ja;q=0.5",
+            }
+
+            response = requests.get(url, headers=headers)
             json_data = json.loads(response.text)
-            json_data = json_data["data"]
             qrcodeImg = json_data["qrcodeImg"]
             qrTicket = json_data["qrTicket"]
 
@@ -158,7 +174,7 @@ class Ui_Dialog(object):
                     break
                 time.sleep(2)
             with open('cookies.txt', 'r') as f:
-                self.custom_cookie = f.read()
+                self.custom_cookie = cookie_dict_to_str(f.read())
         #         hide self.label_qr
         self.label_qr.hide()
         if os.path.exists("qrcode.png"):
