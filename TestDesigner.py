@@ -47,7 +47,7 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "微信店铺"))
-        self.label_status.setText(_translate("Dialog", "当前状态：已登录"))
+        self.label_status.setText(_translate("Dialog", "当前状态：未登录"))
         self.pushrefresh.setText(_translate("Dialog", "刷新二维码"))
         self.exportButton.setText(_translate("Dialog", "导出xlsl"))
         self.progress.setText(_translate("Dialog", "当前导出进度：50%"))
