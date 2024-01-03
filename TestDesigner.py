@@ -129,7 +129,7 @@ class Ui_Dialog(object):
         save_xml(self.path)
         progress = 100
         progress_string = f"{progress:.1f}"
-        self.progress.setText(f"当前导出进度：{progress_string}%")
+        self.progress.setText(f"当前导出进度：已完成")
         
     def readCookies(self):
         self.custom_cookie = ""
@@ -165,5 +165,7 @@ class Ui_Dialog(object):
                 time.sleep(2)
             with open('cookies.txt', 'r') as f:
                 self.custom_cookie = f.read()
+        #         hide self.label_qr
+        self.label_qr.hide()
         self.label_status.setText("当前状态：已登录")
         return self.custom_cookie

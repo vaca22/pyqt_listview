@@ -37,6 +37,14 @@ def get_order_list(page_num, nextKey=None, custom_cookie=None):
         orderId = root[i]["orderId"]
         createTime = root[i]["createTime"]
         status = root[i]["status"]
+        # status 250 已取消 100 已完成 20 待发货
+        if status == 250:
+            status = "已取消"
+        elif status == 100:
+            status = "已完成"
+        elif status == 20:
+            status = "待发货"
+
         goodsName = root[i]["goodsName"]
         productCnt = root[i]["productCnt"]
         total_address = root[i]["total_address"]
