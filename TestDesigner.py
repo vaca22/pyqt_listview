@@ -8,7 +8,6 @@ from threading import Thread
 
 import requests
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QDateTime
 from cookies_convert import cookie_dict_to_str
@@ -29,14 +28,13 @@ class Ui_Dialog(object):
 
     def on_pushrefresh_clicked(self):
         print("pushrefresh button was clicked")
-        #check if thread is None
+        # check if thread is None
         if self.refreshThread is None:
             self.refreshThread = Thread(target=self.readCookies)
             self.refreshThread.start()
             return
 
         print("thread is alive")
-
 
     def on_export_clicked(self):
         if self.exportThread is None:
@@ -51,7 +49,6 @@ class Ui_Dialog(object):
                 self.exportThread = Thread(target=self.exportData)
                 self.exportThread.start()
                 return
-
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -100,9 +97,21 @@ class Ui_Dialog(object):
         self.progress.setText(_translate("Dialog", "当前导出进度：0%"))
         self.label.setText(_translate("Dialog", "开始时间"))
         self.label_2.setText(_translate("Dialog", "结束时间"))
-        #7 days ago
+        # 7 days ago
         self.beginTimeView.setDateTime(QDateTime.currentDateTime().addDays(-7))
         self.endTimeView.setDateTime(QDateTime.currentDateTime())
+
+    def filterTime(self, currentDateTime):
+        print(currentDateTime)
+        currentPyDateTime = QDateTime.fromString(str(currentDateTime), "yyyy-MM-dd HH:mm:ss")
+        beginTime = self.beginTimeView.dateTime().toPyDateTime()
+        endTime = self.endTimeView.dateTime().toPyDateTime()
+        if currentPyDateTime < beginTime:
+            return 1
+        elif currentPyDateTime > endTime:
+            return 2
+        else:
+            return 0
 
     def exportData(self):
         init_xml(self.path)
@@ -118,10 +127,11 @@ class Ui_Dialog(object):
             nextKey = order.nextKey
             if order.total_address.find("*") != -1:
                 order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
-            append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
-                       order.total_address)
+            if self.filterTime(order.createTime) == 0:
+                append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
+                           order.total_address)
         print(totalPage)
-        progress = 100/totalPage-5
+        progress = 100 / totalPage - 5
         progress_string = f"{progress:.1f}"
         self.progress.setText(f"当前导出进度：{progress_string}%")
 
@@ -133,9 +143,14 @@ class Ui_Dialog(object):
                 nextKey = order.nextKey
                 if order.total_address.find("*") != -1:
                     order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
-                append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
-                           order.total_address)
-            progress = 100*i/totalPage-5
+                timeflag = self.filterTime(order.createTime)
+                if timeflag == 0:
+                    append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
+                               order.total_address)
+                elif timeflag == 1:
+                    break
+
+            progress = 100 * i / totalPage - 5
             progress_string = f"{progress:.1f}"
             self.progress.setText(f"当前导出进度：{progress_string}%")
 
@@ -143,7 +158,7 @@ class Ui_Dialog(object):
         progress = 100
         progress_string = f"{progress:.1f}"
         self.progress.setText(f"当前导出进度：已完成")
-        
+
     def readCookies(self):
         self.custom_cookie = ""
         if os.path.exists('cookies.txt'):
