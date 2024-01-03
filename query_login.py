@@ -5,7 +5,7 @@ from query_cookies import query_cookie
 
 
 def query_login(ticket):
-    url = "http://localhost:8569/getstatus"
+    url = "http://vaca.vip:8569/getstatus"
     response = requests.post(url)
     json_data = json.loads(response.text)
     json_data = json_data["data"]

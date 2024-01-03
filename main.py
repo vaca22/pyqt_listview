@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QListWidget, QListWidgetItem, QDialog
+from PyQt5.QtWidgets import QApplication,  QDialog
 
 
 from TestDesigner import Ui_Dialog

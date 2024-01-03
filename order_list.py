@@ -1,27 +1,14 @@
-import datetime
-import pickle
-import agent
-from threading import Thread
-import time
 import requests
-from io import BytesIO
-import os
-from PIL import Image
-import qrcode
-
 requests.packages.urllib3.disable_warnings()
 import requests
 import json
-import openpyxl
-
-import os
 
 from save_class import Order
 
 
 def get_order_list(page_num, nextKey=None, custom_cookie=None):
     result = []
-    url = "http://localhost:8569/getlist"
+    url = "http://vaca.vip:8569/getlist"
 
     body = {
         "pageNum": page_num,

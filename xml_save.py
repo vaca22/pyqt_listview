@@ -1,7 +1,3 @@
-import datetime
-
-import requests
-import json
 import openpyxl
 
 import os
