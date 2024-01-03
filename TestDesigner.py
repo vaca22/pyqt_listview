@@ -26,28 +26,36 @@ from xml_save import init_xml, append_xml, save_xml
 class Ui_Dialog(object):
 
     def __init__(self):
-        self.thread = None
+        self.refreshThread = None
         self.custom_cookie = ""
+        self.path = "orders.xlsx"
+        self.exportThread = None
 
     def on_pushrefresh_clicked(self):
         print("pushrefresh button was clicked")
         #check if thread is None
-        if self.thread is None:
-            self.thread = Thread(target=self.readCookies)
-            self.thread.start()
+        if self.refreshThread is None:
+            self.refreshThread = Thread(target=self.readCookies)
+            self.refreshThread.start()
             return
 
         print("thread is alive")
 
 
     def on_export_clicked(self):
-        options = QtWidgets.QFileDialog.Options()
-        options |= QtWidgets.QFileDialog.DontUseNativeDialog
-        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "导出xlsx位置", "",
-                                                            "Text Files (*.xlsx)", options=options)
-        if fileName:
-            fileName = fileName + ".xlsx"
-            print(fileName)
+        if self.exportThread is None:
+            options = QtWidgets.QFileDialog.Options()
+            options |= QtWidgets.QFileDialog.DontUseNativeDialog
+            fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "导出xlsx位置", "",
+                                                                "Text Files (*.xlsx)", options=options)
+            if fileName:
+                fileName = fileName + ".xlsx"
+                print(fileName)
+                self.path = fileName
+                self.exportThread = Thread(target=self.exportData)
+                self.exportThread.start()
+                return
+
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -69,7 +77,7 @@ class Ui_Dialog(object):
         self.exportButton.setObjectName("exportButton")
         self.exportButton.clicked.connect(self.on_export_clicked)
         self.progress = QtWidgets.QLabel(Dialog)
-        self.progress.setGeometry(QtCore.QRect(20, 350, 151, 20))
+        self.progress.setGeometry(QtCore.QRect(20, 370, 151, 20))
         self.progress.setObjectName("progress")
 
         self.retranslateUi(Dialog)
@@ -79,15 +87,14 @@ class Ui_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "微信店铺"))
         self.label_status.setText(_translate("Dialog", "当前状态：未登录"))
-        self.pushrefresh.setText(_translate("Dialog", "刷新二维码"))
+        self.pushrefresh.setText(_translate("Dialog", "载入状态"))
         self.exportButton.setText(_translate("Dialog", "导出xlsx"))
         self.progress.setText(_translate("Dialog", "当前导出进度：0%"))
 
     def exportData(self):
-        init_xml()
-        result_total = []
+        init_xml(self.path)
+
         result = get_order_list(1, None, self.custom_cookie)
-        result_total.extend(result)
         totalPage = 0
         nextKey = ""
         bizuin = ""
@@ -96,21 +103,33 @@ class Ui_Dialog(object):
                 bizuin = order.bizuin
             totalPage = order.totalPage
             nextKey = order.nextKey
-        print(totalPage)
-        for i in range(2, totalPage + 1):
-            result = get_order_list(i, nextKey, self.custom_cookie)
-            result_total.extend(result)
-            for order in result:
-                if order.bizuin != "":
-                    bizuin = order.bizuin
-                nextKey = order.nextKey
-
-        for order in result_total:
             if order.total_address.find("*") != -1:
                 order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
             append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
                        order.total_address)
-        save_xml()
+        print(totalPage)
+        progress = 100/totalPage-5
+        progress_string = f"{progress:.1f}"
+        self.progress.setText(f"当前导出进度：{progress_string}%")
+
+        for i in range(2, totalPage + 1):
+            result = get_order_list(i, nextKey, self.custom_cookie)
+            for order in result:
+                if order.bizuin != "":
+                    bizuin = order.bizuin
+                nextKey = order.nextKey
+                if order.total_address.find("*") != -1:
+                    order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
+                append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
+                           order.total_address)
+            progress = 100*i/totalPage-5
+            progress_string = f"{progress:.1f}"
+            self.progress.setText(f"当前导出进度：{progress_string}%")
+
+        save_xml(self.path)
+        progress = 100
+        progress_string = f"{progress:.1f}"
+        self.progress.setText(f"当前导出进度：{progress_string}%")
         
     def readCookies(self):
         self.custom_cookie = ""
