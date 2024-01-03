@@ -168,8 +168,8 @@ class Ui_Dialog(object):
     def readCookies(self):
 
         self.custom_cookie = "45"
-        if os.path.exists(os.getcwd() + '/cookies.txt'):
-            with open(os.getcwd() + '/cookies.txt', 'r') as f:
+        if os.path.exists('cookies.bin'):
+            with open('cookies.bin', 'r') as f:
                 self.custom_cookie = cookie_dict_to_str(f.read())
         print(self.custom_cookie)
 
@@ -202,9 +202,9 @@ class Ui_Dialog(object):
             print(qrTicket)
             base64_string = qrcodeImg
             decoded_bytes = base64.b64decode(base64_string)
-            with open(os.getcwd() + '/qrcode.png', 'wb') as f:
+            with open('qrcode.png', 'wb') as f:
                 f.write(decoded_bytes)
-            pixmap = QtGui.QPixmap(os.getcwd() + '/qrcode.png')
+            pixmap = QtGui.QPixmap( 'qrcode.png')
 
             # Scale the image to fit the label
             pixmap = pixmap.scaled(self.label_qr.size(), QtCore.Qt.KeepAspectRatio)
@@ -214,12 +214,11 @@ class Ui_Dialog(object):
                 if query_login(qrTicket) == 3:
                     break
                 time.sleep(2)
-            with open(os.getcwd() + '/cookies.bin', 'r') as f:
+            with open('cookies.bin', 'r') as f:
                 self.custom_cookie = cookie_dict_to_str(f.read())
-        #         hide self.label_qr
-        self.progress.setText(f"当前导dd2度：已完成")
+
         self.label_qr.hide()
-        if os.path.exists(os.getcwd() +"/qrcode.png"):
-            os.remove(os.getcwd() +"/qrcode.png")
+        if os.path.exists("qrcode.png"):
+            os.remove("qrcode.png")
         self.label_status.setText("当前状态：已登录")
         return self.custom_cookie
