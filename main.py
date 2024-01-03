@@ -1,28 +1,18 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QListWidget, QListWidgetItem
+from PyQt5.QtWidgets import QApplication, QWidget, QListWidget, QListWidgetItem, QDialog
 
 
-class ListWidgetDemo(QListWidget):
-    def __init__(self):
-        super().__init__()
-        self.resize(500, 500)
-        self.setStyleSheet('font-size: 35px;')
-
-        jan = 'Januaty'
-        feb = 'g'
-        mar = 'March'
+from TestDesigner import Ui_Dialog
 
 
-        self.addItem(jan)
-        self.addItem(QListWidgetItem(jan))
-        self.addItem(feb)
-        self.addItem(mar)
 
 
 if __name__ == '__main__':
     print('PyCharm')
     app = QApplication(sys.argv)
-    demo = ListWidgetDemo()
-    demo.show()
+    Dialog = QDialog()
+    ui = Ui_Dialog()
+    ui.setupUi(Dialog)
+    Dialog.show()
 
     sys.exit(app.exec_())
