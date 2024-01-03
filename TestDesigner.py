@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
+import base64
+import json
+import os
+import time
+from threading import Thread
 
+import requests
 # Form implementation generated from reading ui file 'TestDesigner.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
@@ -10,14 +16,20 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from query_login import query_login
+from test_login import test_login
+
 
 class Ui_Dialog(object):
 
     def on_pushrefresh_clicked(self):
         print("pushrefresh button was clicked")
+        thread = Thread(target=self.readCookies)
+        thread.start()
 
     def on_export_clicked(self):
         print("export button was clicked")
+
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(454, 399)
@@ -50,4 +62,42 @@ class Ui_Dialog(object):
         self.label_status.setText(_translate("Dialog", "当前状态：未登录"))
         self.pushrefresh.setText(_translate("Dialog", "刷新二维码"))
         self.exportButton.setText(_translate("Dialog", "导出xlsl"))
-        self.progress.setText(_translate("Dialog", "当前导出进度：50%"))
+        self.progress.setText(_translate("Dialog", "当前导出进度：0%"))
+
+    def readCookies(self):
+        custom_cookie = ""
+        if os.path.exists('cookies.txt'):
+            with open('cookies.txt', 'r') as f:
+                custom_cookie = f.read()
+        print(custom_cookie)
+        # print type
+        if not test_login(custom_cookie):
+            url = "http://localhost:8569/getqr"
+
+            response = requests.post(url)
+            json_data = json.loads(response.text)
+            json_data = json_data["data"]
+            qrcodeImg = json_data["qrcodeImg"]
+            qrTicket = json_data["qrTicket"]
+
+            print(qrcodeImg)
+            print(qrTicket)
+            base64_string = qrcodeImg
+            decoded_bytes = base64.b64decode(base64_string)
+            with open('qrcode.png', 'wb') as f:
+                f.write(decoded_bytes)
+            pixmap = QtGui.QPixmap("qrcode.png")
+
+            # Scale the image to fit the label
+            pixmap = pixmap.scaled(self.label_qr.size(), QtCore.Qt.KeepAspectRatio)
+
+            self.label_qr.setPixmap(pixmap)
+            while True:
+                if query_login(qrTicket) == 3:
+                    break
+                time.sleep(2)
+            self.label_status.setText("当前状态：已登录")
+
+            with open('cookies.txt', 'r') as f:
+                custom_cookie = f.read()
+        return custom_cookie

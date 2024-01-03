@@ -15,19 +15,6 @@ import json
 
 
 
-def find_key(data, target_key):
-    queue = [data]
-    while len(queue) > 0:
-        current = queue.pop(0)
-        if type(current) == dict:
-            for key in current:
-                if key == target_key:
-                    return {key: current[key]}
-                if isinstance(current[key], (list, dict)):
-                    queue.append(current[key])
-        elif type(current) == list:
-            queue.extend(current)
-    return None
 
 
 def test_login(custom_cookie=None):
