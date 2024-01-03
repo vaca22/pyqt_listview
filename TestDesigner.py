@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 import base64
 import json
@@ -9,7 +10,7 @@ import requests
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtCore import QDateTime
 from cookies_convert import cookie_dict_to_str
 from order_detail import order_detail
 from order_list import get_order_list
@@ -54,7 +55,7 @@ class Ui_Dialog(object):
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(454, 399)
+        Dialog.resize(541, 339)
         self.label_qr = QtWidgets.QLabel(Dialog)
         self.label_qr.setGeometry(QtCore.QRect(140, 50, 241, 261))
         self.label_qr.setText("")
@@ -68,12 +69,24 @@ class Ui_Dialog(object):
         self.pushrefresh.clicked.connect(self.on_pushrefresh_clicked)
 
         self.exportButton = QtWidgets.QPushButton(Dialog)
-        self.exportButton.setGeometry(QtCore.QRect(330, 350, 75, 24))
+        self.exportButton.setGeometry(QtCore.QRect(40, 260, 75, 24))
         self.exportButton.setObjectName("exportButton")
         self.exportButton.clicked.connect(self.on_export_clicked)
         self.progress = QtWidgets.QLabel(Dialog)
-        self.progress.setGeometry(QtCore.QRect(20, 370, 151, 20))
+        self.progress.setGeometry(QtCore.QRect(20, 220, 151, 20))
         self.progress.setObjectName("progress")
+        self.beginTimeView = QtWidgets.QDateTimeEdit(Dialog)
+        self.beginTimeView.setGeometry(QtCore.QRect(10, 100, 194, 22))
+        self.beginTimeView.setObjectName("beginTimeView")
+        self.endTimeView = QtWidgets.QDateTimeEdit(Dialog)
+        self.endTimeView.setGeometry(QtCore.QRect(10, 160, 194, 22))
+        self.endTimeView.setObjectName("endTimeView")
+        self.label = QtWidgets.QLabel(Dialog)
+        self.label.setGeometry(QtCore.QRect(20, 80, 84, 16))
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(Dialog)
+        self.label_2.setGeometry(QtCore.QRect(20, 140, 84, 16))
+        self.label_2.setObjectName("label_2")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -85,6 +98,10 @@ class Ui_Dialog(object):
         self.pushrefresh.setText(_translate("Dialog", "载入状态"))
         self.exportButton.setText(_translate("Dialog", "导出xlsx"))
         self.progress.setText(_translate("Dialog", "当前导出进度：0%"))
+        self.label.setText(_translate("Dialog", "开始时间"))
+        self.label_2.setText(_translate("Dialog", "结束时间"))
+        self.beginTimeView.setDateTime(QDateTime.currentDateTime())
+        self.endTimeView.setDateTime(QDateTime.currentDateTime())
 
     def exportData(self):
         init_xml(self.path)
