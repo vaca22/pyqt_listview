@@ -1,16 +1,11 @@
 import requests
+
 requests.packages.urllib3.disable_warnings()
 import requests
 import json
 
 
-
-
-
-def test_login(custom_cookie=None):
-    order_status = -1
-    page_num = 1
-    nextKey = None
+def test_login(custom_cookie):
     url = "https://channels.weixin.qq.com/shop-faas/mmchannelstradeorder/api/getList"
     headers = {
         "Host": "channels.weixin.qq.com",
@@ -21,14 +16,12 @@ def test_login(custom_cookie=None):
         "Content-Type": "application/json",
         "Accept": "*/*",
         "Accept-Language": "*",
-        "Accept-Encoding": "gzip, deflate, b"
     }
     params = {
-        "orderStatus": order_status,
-        "pageNum": page_num,
-        "nextKey": nextKey,
+        "orderStatus": "-1",
+        "pageNum": "1",
     }
-    response = requests.get(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers, params=params, verify=False)
     root = json.loads(response.text)
     code = root["code"]
     return code == 0

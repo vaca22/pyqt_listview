@@ -54,7 +54,7 @@ class Ui_Dialog(object):
         Dialog.setObjectName("Dialog")
         Dialog.resize(541, 339)
         self.label_qr = QtWidgets.QLabel(Dialog)
-        self.label_qr.setGeometry(QtCore.QRect(140, 50, 241, 261))
+        self.label_qr.setGeometry(QtCore.QRect(240, 50, 340, 261))
         self.label_qr.setText("")
         self.label_qr.setObjectName("label_qr")
         self.label_status = QtWidgets.QLabel(Dialog)
@@ -100,6 +100,8 @@ class Ui_Dialog(object):
         # 7 days ago
         self.beginTimeView.setDateTime(QDateTime.currentDateTime().addDays(-7))
         self.endTimeView.setDateTime(QDateTime.currentDateTime())
+        self.pushrefresh.hide()
+        self.on_pushrefresh_clicked()
 
     def filterTime(self, currentDateTime):
         print(currentDateTime)
@@ -137,6 +139,7 @@ class Ui_Dialog(object):
 
         for i in range(2, totalPage + 1):
             result = get_order_list(i, nextKey, self.custom_cookie)
+            breakFlag = False
             for order in result:
                 if order.bizuin != "":
                     bizuin = order.bizuin
@@ -148,7 +151,10 @@ class Ui_Dialog(object):
                     append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
                                order.total_address)
                 elif timeflag == 1:
+                    breakFlag = True
                     break
+            if breakFlag:
+                break
 
             progress = 100 * i / totalPage - 5
             progress_string = f"{progress:.1f}"
@@ -160,11 +166,13 @@ class Ui_Dialog(object):
         self.progress.setText(f"当前导出进度：已完成")
 
     def readCookies(self):
-        self.custom_cookie = ""
-        if os.path.exists('cookies.txt'):
-            with open('cookies.txt', 'r') as f:
+
+        self.custom_cookie = "45"
+        if os.path.exists(os.getcwd() + '/cookies.txt'):
+            with open(os.getcwd() + '/cookies.txt', 'r') as f:
                 self.custom_cookie = cookie_dict_to_str(f.read())
         print(self.custom_cookie)
+
         # print type
         if not test_login(self.custom_cookie):
             url = "https://channels.weixin.qq.com/shop-faas/mmecnodelogin/getLoginQrCode?token=&lang=zh_CN&login_appid="
@@ -185,7 +193,7 @@ class Ui_Dialog(object):
                 "Accept-Language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,ja-JP;q=0.6,ja;q=0.5",
             }
 
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, headers=headers,verify=False)
             json_data = json.loads(response.text)
             qrcodeImg = json_data["qrcodeImg"]
             qrTicket = json_data["qrTicket"]
@@ -194,9 +202,9 @@ class Ui_Dialog(object):
             print(qrTicket)
             base64_string = qrcodeImg
             decoded_bytes = base64.b64decode(base64_string)
-            with open('qrcode.png', 'wb') as f:
+            with open(os.getcwd() + '/qrcode.png', 'wb') as f:
                 f.write(decoded_bytes)
-            pixmap = QtGui.QPixmap("qrcode.png")
+            pixmap = QtGui.QPixmap(os.getcwd() + '/qrcode.png')
 
             # Scale the image to fit the label
             pixmap = pixmap.scaled(self.label_qr.size(), QtCore.Qt.KeepAspectRatio)
@@ -206,11 +214,12 @@ class Ui_Dialog(object):
                 if query_login(qrTicket) == 3:
                     break
                 time.sleep(2)
-            with open('cookies.txt', 'r') as f:
+            with open(os.getcwd() + '/cookies.bin', 'r') as f:
                 self.custom_cookie = cookie_dict_to_str(f.read())
         #         hide self.label_qr
+        self.progress.setText(f"当前导dd2度：已完成")
         self.label_qr.hide()
-        if os.path.exists("qrcode.png"):
-            os.remove("qrcode.png")
+        if os.path.exists(os.getcwd() +"/qrcode.png"):
+            os.remove(os.getcwd() +"/qrcode.png")
         self.label_status.setText("当前状态：已登录")
         return self.custom_cookie

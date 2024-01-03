@@ -28,7 +28,7 @@ def query_login(ticket):
         "Accept-Language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,ja-JP;q=0.6,ja;q=0.5"
     }
 
-    response = requests.get(url, params=params, headers=headers)
+    response = requests.get(url, params=params, headers=headers,verify=False)
 
     json_data = json.loads(response.text)
 
@@ -39,7 +39,7 @@ def query_login(ticket):
         cookies = response.cookies
         cookies_dict = cookies.get_dict()
         print(cookies_dict)
-        with open('cookies.txt', 'w') as f:
+        with open('cookies.bin', 'w') as f:
             f.write(str(cookies_dict))
 
     return status
