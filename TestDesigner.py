@@ -14,11 +14,31 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(400, 300)
+        Dialog.resize(454, 399)
+        self.label_qr = QtWidgets.QLabel(Dialog)
+        self.label_qr.setGeometry(QtCore.QRect(140, 50, 241, 261))
+        self.label_qr.setText("")
+        self.label_qr.setObjectName("label_qr")
+        self.label_status = QtWidgets.QLabel(Dialog)
+        self.label_status.setGeometry(QtCore.QRect(10, 10, 131, 16))
+        self.label_status.setObjectName("label_status")
+        self.pushrefresh = QtWidgets.QPushButton(Dialog)
+        self.pushrefresh.setGeometry(QtCore.QRect(10, 40, 91, 24))
+        self.pushrefresh.setObjectName("pushrefresh")
+        self.exportButton = QtWidgets.QPushButton(Dialog)
+        self.exportButton.setGeometry(QtCore.QRect(330, 350, 75, 24))
+        self.exportButton.setObjectName("exportButton")
+        self.progress = QtWidgets.QLabel(Dialog)
+        self.progress.setGeometry(QtCore.QRect(20, 350, 151, 20))
+        self.progress.setObjectName("progress")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "测试窗口"))
+        Dialog.setWindowTitle(_translate("Dialog", "微信店铺"))
+        self.label_status.setText(_translate("Dialog", "当前状态：已登录"))
+        self.pushrefresh.setText(_translate("Dialog", "刷新二维码"))
+        self.exportButton.setText(_translate("Dialog", "导出xlsl"))
+        self.progress.setText(_translate("Dialog", "当前导出进度：50%"))
