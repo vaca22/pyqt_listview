@@ -105,8 +105,7 @@ class Ui_Dialog(object):
                 if query_login(qrTicket) == 3:
                     break
                 time.sleep(2)
-            self.label_status.setText("当前状态：已登录")
-
             with open('cookies.txt', 'r') as f:
                 custom_cookie = f.read()
+        self.label_status.setText("当前状态：已登录")
         return custom_cookie
