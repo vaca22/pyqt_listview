@@ -167,5 +167,7 @@ class Ui_Dialog(object):
                 self.custom_cookie = f.read()
         #         hide self.label_qr
         self.label_qr.hide()
+        if os.path.exists("qrcode.png"):
+            os.remove("qrcode.png")
         self.label_status.setText("当前状态：已登录")
         return self.custom_cookie
