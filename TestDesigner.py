@@ -16,14 +16,18 @@ import requests
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from order_detail import order_detail
+from order_list import get_order_list
 from query_login import query_login
 from test_login import test_login
+from xml_save import init_xml, append_xml, save_xml
 
 
 class Ui_Dialog(object):
 
     def __init__(self):
         self.thread = None
+        self.custom_cookie = ""
 
     def on_pushrefresh_clicked(self):
         print("pushrefresh button was clicked")
@@ -37,7 +41,13 @@ class Ui_Dialog(object):
 
 
     def on_export_clicked(self):
-        print("export button was clicked")
+        options = QtWidgets.QFileDialog.Options()
+        options |= QtWidgets.QFileDialog.DontUseNativeDialog
+        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "导出xlsx位置", "",
+                                                            "Text Files (*.xlsx)", options=options)
+        if fileName:
+            fileName = fileName + ".xlsx"
+            print(fileName)
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -70,17 +80,46 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_translate("Dialog", "微信店铺"))
         self.label_status.setText(_translate("Dialog", "当前状态：未登录"))
         self.pushrefresh.setText(_translate("Dialog", "刷新二维码"))
-        self.exportButton.setText(_translate("Dialog", "导出xlsl"))
+        self.exportButton.setText(_translate("Dialog", "导出xlsx"))
         self.progress.setText(_translate("Dialog", "当前导出进度：0%"))
 
+    def exportData(self):
+        init_xml()
+        result_total = []
+        result = get_order_list(1, None, self.custom_cookie)
+        result_total.extend(result)
+        totalPage = 0
+        nextKey = ""
+        bizuin = ""
+        for order in result:
+            if order.bizuin != "":
+                bizuin = order.bizuin
+            totalPage = order.totalPage
+            nextKey = order.nextKey
+        print(totalPage)
+        for i in range(2, totalPage + 1):
+            result = get_order_list(i, nextKey, self.custom_cookie)
+            result_total.extend(result)
+            for order in result:
+                if order.bizuin != "":
+                    bizuin = order.bizuin
+                nextKey = order.nextKey
+
+        for order in result_total:
+            if order.total_address.find("*") != -1:
+                order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
+            append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
+                       order.total_address)
+        save_xml()
+        
     def readCookies(self):
-        custom_cookie = ""
+        self.custom_cookie = ""
         if os.path.exists('cookies.txt'):
             with open('cookies.txt', 'r') as f:
-                custom_cookie = f.read()
-        print(custom_cookie)
+                self.custom_cookie = f.read()
+        print(self.custom_cookie)
         # print type
-        if not test_login(custom_cookie):
+        if not test_login(self.custom_cookie):
             url = "http://localhost:8569/getqr"
 
             response = requests.post(url)
@@ -106,6 +145,6 @@ class Ui_Dialog(object):
                     break
                 time.sleep(2)
             with open('cookies.txt', 'r') as f:
-                custom_cookie = f.read()
+                self.custom_cookie = f.read()
         self.label_status.setText("当前状态：已登录")
-        return custom_cookie
+        return self.custom_cookie
