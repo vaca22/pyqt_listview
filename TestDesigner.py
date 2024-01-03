@@ -22,10 +22,19 @@ from test_login import test_login
 
 class Ui_Dialog(object):
 
+    def __init__(self):
+        self.thread = None
+
     def on_pushrefresh_clicked(self):
         print("pushrefresh button was clicked")
-        thread = Thread(target=self.readCookies)
-        thread.start()
+        #check if thread is None
+        if self.thread is None:
+            self.thread = Thread(target=self.readCookies)
+            self.thread.start()
+            return
+
+        print("thread is alive")
+
 
     def on_export_clicked(self):
         print("export button was clicked")
