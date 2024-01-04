@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
+import base64
+import json
+import os
+import time
+from threading import Thread
 
+import requests
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
@@ -9,16 +15,28 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QDateTime
 from PyQt5.QtWidgets import QMessageBox
 
+from cookies_convert import cookie_dict_to_str
 from export_form import Ui_ExportForm
 from login import Ui_Login_Form
+from order_detail import order_detail
+from order_list import get_order_list
+from query_login import query_login
+from test_login import test_login
+from xml_save import save_xml, append_xml, init_xml
 
 
 class Ui_MainWindow(object):
     def __init__(self):
         self.username = None
         self.password = None
+        self.breakFlag = None
+        self.refreshThread = None
+        self.custom_cookie = ""
+        self.path = "orders.xlsx"
+        self.exportThread = None
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -57,6 +75,9 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        if self.refreshThread is None:
+            self.refreshThread = Thread(target=self.readCookies)
+            self.refreshThread.start()
 
 
     def rechargeClick(self):
@@ -79,3 +100,126 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "微信店铺订单导出工具"))
+
+
+
+    def filterTime(self, currentDateTime):
+        print(currentDateTime)
+        currentPyDateTime = QDateTime.fromString(str(currentDateTime), "yyyy-MM-dd HH:mm:ss")
+        beginTime = self.beginTimeView.dateTime().toPyDateTime()
+        endTime = self.endTimeView.dateTime().toPyDateTime()
+        if currentPyDateTime < beginTime:
+            return 1
+        elif currentPyDateTime > endTime:
+            return 2
+        else:
+            return 0
+
+    def exportData(self):
+        init_xml(self.path)
+
+        result = get_order_list(1, None, self.custom_cookie)
+        totalPage = 0
+        nextKey = ""
+        bizuin = ""
+        for order in result:
+            if order.bizuin != "":
+                bizuin = order.bizuin
+            totalPage = order.totalPage
+            nextKey = order.nextKey
+            if order.total_address.find("*") != -1:
+                order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
+            if self.filterTime(order.createTime) == 0:
+                append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
+                           order.total_address)
+        print(totalPage)
+        progress = 100 / totalPage - 5
+        progress_string = f"{progress:.1f}"
+        self.progress.setText(f"当前导出进度：{progress_string}%")
+        self.breakFlag = False
+        for i in range(2, totalPage + 1):
+            result = get_order_list(i, nextKey, self.custom_cookie)
+            self.breakFlag = False
+            for order in result:
+                if order.bizuin != "":
+                    bizuin = order.bizuin
+                nextKey = order.nextKey
+                if order.total_address.find("*") != -1:
+                    order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
+                timeflag = self.filterTime(order.createTime)
+                print("timeflag", timeflag)
+                if timeflag == 0:
+                    append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
+                               order.total_address)
+                elif timeflag == 1:
+                    self.breakFlag = True
+
+            if self.breakFlag:
+                break
+
+            progress = 100 * i / totalPage - 5
+            progress_string = f"{progress:.1f}"
+            self.progress.setText(f"当前导出进度：{progress_string}%")
+
+        save_xml(self.path)
+        progress = 100
+        progress_string = f"{progress:.1f}"
+        self.progress.setText(f"当前导出进度：已完成")
+
+    def readCookies(self):
+
+        self.custom_cookie = "45"
+        if os.path.exists('cookies.ini'):
+            with open('cookies.ini', 'r') as f:
+                self.custom_cookie = cookie_dict_to_str(f.read())
+        print(self.custom_cookie)
+
+        # print type
+        if not test_login(self.custom_cookie):
+            url = "https://channels.weixin.qq.com/shop-faas/mmecnodelogin/getLoginQrCode?token=&lang=zh_CN&login_appid="
+
+            headers = {
+                "Host": "channels.weixin.qq.com",
+                "Connection": "keep-alive",
+                "sec-ch-ua": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+                "Accept": "application/json, text/plain, */*",
+                "sec-ch-ua-mobile": "?0",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "sec-ch-ua-platform": '"Windows"',
+                "Sec-Fetch-Site": "same-origin",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Dest": "empty",
+                "Referer": "https://channels.weixin.qq.com/shop",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Accept-Language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,ja-JP;q=0.6,ja;q=0.5",
+            }
+
+            response = requests.get(url, headers=headers,verify=False)
+            json_data = json.loads(response.text)
+            qrcodeImg = json_data["qrcodeImg"]
+            qrTicket = json_data["qrTicket"]
+
+            print(qrcodeImg)
+            print(qrTicket)
+            base64_string = qrcodeImg
+            decoded_bytes = base64.b64decode(base64_string)
+            with open('qrcode.png', 'wb') as f:
+                f.write(decoded_bytes)
+            pixmap = QtGui.QPixmap( 'qrcode.png')
+
+            # Scale the image to fit the label
+            pixmap = pixmap.scaled(self.ui_export.qrcode.size(), QtCore.Qt.KeepAspectRatio)
+
+            self.ui_export.qrcode.setPixmap(pixmap)
+            while True:
+                if query_login(qrTicket) == 3:
+                    break
+                time.sleep(2)
+            with open('cookies.ini', 'r') as f:
+                self.custom_cookie = cookie_dict_to_str(f.read())
+
+        self.ui_export.qrcode.hide()
+        if os.path.exists("qrcode.png"):
+            os.remove("qrcode.png")
+        self.ui_export.login_status.setText("当前状态：已登录")
+        return self.custom_cookie
