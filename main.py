@@ -2,28 +2,24 @@ import json
 import sys
 
 import requests
+from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication,  QDialog
 
 
 from TestDesigner import Ui_Dialog
-
-
+from mainwindow import Ui_MainWindow
 
 
 if __name__ == '__main__':
-    # url = "http://vaca.vip:8569/authenticate"
-    # body = {
-    #     "username": "13207759669",
-    #     "password": "22345678"
-    # }
-    # response = requests.post(url, json=body, verify=False)
-    # json_data = json.loads(response.text)
-    # code = json_data["code"]
-    # if code == 0:
     app = QApplication(sys.argv)
-    Dialog = QDialog()
-    ui = Ui_Dialog()
-    ui.setupUi(Dialog)
-    Dialog.show()
+    # class Ui_MainWindow(object):
+    #     def setupUi(self, MainWindow):
+
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+
+
 
     sys.exit(app.exec_())
