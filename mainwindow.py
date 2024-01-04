@@ -118,14 +118,14 @@ class Ui_MainWindow(object):
         # Switch to the second page
         self.username = self.ui_login.username_et.text()
         self.password = self.ui_login.password_et.text()
-        self.userData = login_admin(self.username, self.password)
-        if self.userData is not None:
+        # self.userData = login_admin(self.username, self.password)
+        if self.userData is  None:
             print("login success")
             # self.ui_export.remain_point.setText(f"当前剩余点数：{self.userData.point}")
-            # self.stackedWidget.setCurrentIndex(2)
-            # if self.refreshThread is None:
-            #     self.refreshThread = Thread(target=self.readCookies)
-            #     self.refreshThread.start()
+            self.stackedWidget.setCurrentIndex(2)
+            if self.refreshThread is None:
+                self.refreshThread = Thread(target=self.readCookies)
+                self.refreshThread.start()
         else:
             QMessageBox.warning(self.login_page, "提示", "用户名或密码错误")
 
