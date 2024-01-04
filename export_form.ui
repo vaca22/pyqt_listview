@@ -16,10 +16,10 @@
   <widget class="QLabel" name="qrcode">
    <property name="geometry">
     <rect>
-     <x>510</x>
+     <x>460</x>
      <y>90</y>
-     <width>231</width>
-     <height>221</height>
+     <width>240</width>
+     <height>240</height>
     </rect>
    </property>
    <property name="text">
@@ -191,7 +191,7 @@
   <widget class="QPushButton" name="export_bt">
    <property name="geometry">
     <rect>
-     <x>540</x>
+     <x>520</x>
      <y>350</y>
      <width>171</width>
      <height>91</height>

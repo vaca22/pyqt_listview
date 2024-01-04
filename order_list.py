@@ -65,6 +65,8 @@ def get_order_list(page_num, nextKey=None, custom_cookie=None):
             status = "已完成"
         elif status == 20:
             status = "待发货"
+        elif status == 30:
+            status = "已发货"
         addressInfo = order["addressInfo"]
         userName = addressInfo["userName"]
         postalCode = addressInfo["postalCode"]

@@ -112,17 +112,30 @@ class Ui_MainWindow(object):
         print("recharge")
 
     def exportClick(self):
-        self.exportData()
+        if self.exportThread is None:
+            options = QtWidgets.QFileDialog.Options()
+            options |= QtWidgets.QFileDialog.DontUseNativeDialog
+            fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "导出xlsx位置", "",
+                                                                "Text Files (*.xlsx)", options=options)
+            if fileName:
+                fileName = fileName + ".xlsx"
+                print(fileName)
+                self.path = fileName
+                self.exportThread = Thread(target=self.exportData)
+                self.exportThread.start()
 
     def loginClick(self):
         # Switch to the second page
         self.username = self.ui_login.username_et.text()
         self.password = self.ui_login.password_et.text()
         # self.userData = login_admin(self.username, self.password)
-        if self.userData is  None:
+        if self.userData is None:
             print("login success")
-            # self.ui_export.remain_point.setText(f"当前剩余点数：{self.userData.point}")
+            # self.ui_export.remain_point.setText(f"剩余点数：{self.userData.point}")
             self.stackedWidget.setCurrentIndex(2)
+            self.ui_export.end_date.setDateTime(QtCore.QDateTime.currentDateTime())
+            self.ui_export.begin_date.setDateTime(QtCore.QDateTime.currentDateTime().addDays(-7))
+
             if self.refreshThread is None:
                 self.refreshThread = Thread(target=self.readCookies)
                 self.refreshThread.start()
@@ -133,7 +146,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "微信店铺订单导出工具"))
 
-    def filterTime(self, currentDateTime):
+    def filterTime(self, currentDateTime, status):
         print(currentDateTime)
         currentPyDateTime = QDateTime.fromString(str(currentDateTime), "yyyy-MM-dd HH:mm:ss")
         beginDate = self.ui_export.begin_date.date()
@@ -142,12 +155,26 @@ class Ui_MainWindow(object):
         endDate = self.ui_export.end_date.date()
         endDateTime = self.ui_export.end_time.time()
         endTime = QDateTime(endDate, endDateTime)
+        wantStatus = self.ui_export.status_drop.currentIndex()
         if currentPyDateTime < beginTime:
             return 1
         elif currentPyDateTime > endTime:
             return 2
         else:
-            return 0
+            if wantStatus == 0:
+                return 0
+            elif wantStatus == 1:
+                if status == "已完成":
+                    return 0
+                elif status == "已发货":
+                    return 0
+                else:
+                    return 3
+            elif wantStatus == 2:
+                if status == "待发货":
+                    return 0
+                else:
+                    return 3
 
     def exportData(self):
         init_xml(self.path)
@@ -163,13 +190,13 @@ class Ui_MainWindow(object):
             nextKey = order.nextKey
             if order.total_address.find("*") != -1:
                 order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
-            if self.filterTime(order.createTime) == 0:
+            if self.filterTime(order.createTime, order.status) == 0:
                 append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
                            order.total_address)
         print(totalPage)
         progress = 100 / totalPage - 5
         progress_string = f"{progress:.1f}"
-        self.ui_export.export_status.setText(f"当前导出进度：{progress_string}%")
+        self.ui_export.export_status.setText(f"进度：{progress_string}%")
         self.breakFlag = False
         for i in range(2, totalPage + 1):
             result = get_order_list(i, nextKey, self.custom_cookie)
@@ -180,7 +207,7 @@ class Ui_MainWindow(object):
                 nextKey = order.nextKey
                 if order.total_address.find("*") != -1:
                     order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
-                timeflag = self.filterTime(order.createTime)
+                timeflag = self.filterTime(order.createTime, order.status)
                 print("timeflag", timeflag)
                 if timeflag == 0:
                     append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
@@ -193,12 +220,12 @@ class Ui_MainWindow(object):
 
             progress = 100 * i / totalPage - 5
             progress_string = f"{progress:.1f}"
-            self.ui_export.export_status.setText(f"当前导出进度：{progress_string}%")
+            self.ui_export.export_status.setText(f"进度：{progress_string}%")
 
         save_xml(self.path)
         progress = 100
         progress_string = f"{progress:.1f}"
-        self.ui_export.export_status.setText(f"当前导出进度：已完成")
+        self.ui_export.export_status.setText(f"进度：已完成")
 
     def readCookies(self):
 
@@ -253,7 +280,10 @@ class Ui_MainWindow(object):
                 self.custom_cookie = cookie_dict_to_str(f.read())
 
         self.ui_export.qrcode.hide()
+        self.ui_export.export_status.setText("进度：未开始")
+        self.ui_export.export_status.show()
+        self.ui_export.export_status.adjustSize()
         if os.path.exists("qrcode.png"):
             os.remove("qrcode.png")
-        self.ui_export.login_status.setText("当前状态：已登录")
+        self.ui_export.login_status.setText("状态：已登录")
         return self.custom_cookie
