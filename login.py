@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Login_Form(object):
     def setupUi(self, Form):
-        Form.setObjectName("Form")
+        Form.setObjectName("Login_Form")
         Form.resize(800, 500)
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setGeometry(QtCore.QRect(320, 300, 130, 51))
@@ -29,6 +29,7 @@ class Ui_Login_Form(object):
         self.username_lb.setObjectName("username_lb")
         self.password_lb = QtWidgets.QLabel(Form)
         self.password_lb.setGeometry(QtCore.QRect(260, 205, 54, 21))
+
         font = QtGui.QFont()
         font.setPointSize(12)
         self.password_lb.setFont(font)
@@ -39,6 +40,7 @@ class Ui_Login_Form(object):
         self.password_et = QtWidgets.QLineEdit(Form)
         self.password_et.setGeometry(QtCore.QRect(330, 200, 181, 31))
         self.password_et.setObjectName("password_et")
+        self.password_et.setEchoMode(QtWidgets.QLineEdit.Password)
         self.label = QtWidgets.QLabel(Form)
         self.label.setGeometry(QtCore.QRect(300, 10, 151, 61))
         font = QtGui.QFont()
@@ -52,11 +54,11 @@ class Ui_Login_Form(object):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "系统登录"))
-        self.pushButton.setText(_translate("Form", "登录"))
-        self.username_lb.setText(_translate("Form", "用户名"))
+        Form.setWindowTitle(_translate("Login_Form", "系统登录"))
+        self.pushButton.setText(_translate("Login_Form", "登录"))
+        self.username_lb.setText(_translate("Login_Form", "用户名"))
         self.username_lb.adjustSize()
-        self.password_lb.setText(_translate("Form", "密码"))
+        self.password_lb.setText(_translate("Login_Form", "密码"))
         self.password_lb.adjustSize()
-        self.label.setText(_translate("Form", "系统登录"))
+        self.label.setText(_translate("Login_Form", "系统登录"))
         self.label.adjustSize()
