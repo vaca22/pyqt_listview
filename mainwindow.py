@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 
 from login import Ui_Login_Form
 
@@ -62,6 +63,8 @@ class Ui_MainWindow(object):
         self.password = self.ui_login.password_et.text()
         if(self.username == 'admin' and self.password == 'admin'):
             self.stackedWidget.setCurrentIndex(1)
+        else:
+            QMessageBox.warning(self.login_page, "提示", "用户名或密码错误")
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
