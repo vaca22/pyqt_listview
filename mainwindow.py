@@ -18,18 +18,21 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QDateTime
 from PyQt5.QtWidgets import QMessageBox
 
+from admin import register, login_admin
 from cookies_convert import cookie_dict_to_str
 from export_form import Ui_ExportForm
 from login import Ui_Login_Form
 from order_detail import order_detail
 from order_list import get_order_list
 from query_login import query_login
+from register import Ui_Register_Form
 from test_login import test_login
 from xml_save import save_xml, append_xml, init_xml
 
 
 class Ui_MainWindow(object):
     def __init__(self):
+        self.userData = None
         self.username = None
         self.password = None
         self.breakFlag = None
@@ -51,9 +54,23 @@ class Ui_MainWindow(object):
         self.ui_login = Ui_Login_Form()
         self.ui_login.setupUi(self.login_page)
         self.ui_login.pushButton.clicked.connect(self.loginClick)
+        self.ui_login.register_bt.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
 
         self.login_page.setObjectName("login_page")
-        # self.stackedWidget.addWidget(self.login_page)
+        self.stackedWidget.addWidget(self.login_page)
+
+        self.register_page = QtWidgets.QWidget()
+        self.ui_register = Ui_Register_Form()
+        self.ui_register.setupUi(self.register_page)
+        self.ui_register.register_bt.clicked.connect(self.registerClick)
+
+
+        self.stackedWidget.addWidget(self.register_page)
+
+
+
+
+
         self.export_page = QtWidgets.QWidget()
         self.export_page.setObjectName("export_form")
 
@@ -75,9 +92,27 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        if self.refreshThread is None:
-            self.refreshThread = Thread(target=self.readCookies)
-            self.refreshThread.start()
+
+
+    def registerClick(self):
+        print("register")
+        username = self.ui_register.username_et.text()
+        password = self.ui_register.password_et.text()
+        password2 = self.ui_register.password2_et.text()
+        tel = self.ui_register.tel_et.text()
+        if username == "" or password == "" or password2 == "" or tel == "":
+            QMessageBox.warning(self.register_page, "提示", "请填写完整信息")
+            return
+        if password != password2:
+            QMessageBox.warning(self.register_page, "提示", "两次密码不一致")
+            return
+        tel=self.ui_register.tel_et.text()
+        if len(tel) != 11:
+            QMessageBox.warning(self.register_page, "提示", "手机号码格式错误")
+            return
+        if register(username, password, tel):
+            QMessageBox.information(self.register_page, "提示", "注册成功")
+            self.stackedWidget.setCurrentIndex(0)
 
 
     def rechargeClick(self):
@@ -92,8 +127,13 @@ class Ui_MainWindow(object):
         # Switch to the second page
         self.username = self.ui_login.username_et.text()
         self.password = self.ui_login.password_et.text()
-        if (self.username == 'admin' and self.password == 'admin'):
-            self.stackedWidget.setCurrentIndex(1)
+        self.userData=login_admin(self.username, self.password)
+        if self.userData is not None:
+            self.ui_export.remain_point.setText(f"当前剩余点数：{self.userData.point}")
+            self.stackedWidget.setCurrentIndex(2)
+            if self.refreshThread is None:
+                self.refreshThread = Thread(target=self.readCookies)
+                self.refreshThread.start()
         else:
             QMessageBox.warning(self.login_page, "提示", "用户名或密码错误")
 

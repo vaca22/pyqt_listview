@@ -74,7 +74,7 @@ class Ui_ExportForm(object):
         self.export_bt.setFont(font)
         self.export_bt.setObjectName("export_bt")
         self.recharge = QtWidgets.QPushButton(ExportForm)
-        self.recharge.setGeometry(QtCore.QRect(270, 140, 101, 51))
+        self.recharge.setGeometry(QtCore.QRect(50, 70, 101, 51))
         font = QtGui.QFont()
         font.setPointSize(14)
         self.recharge.setFont(font)
