@@ -32,6 +32,7 @@ def login_admin(account, pwd):
             'pwd': pwd
         }
     )
+    print(login_response.text)
     json_data = json.loads(login_response.text)
     body = json_data["body"]
     resultCode = body["resultCode"]

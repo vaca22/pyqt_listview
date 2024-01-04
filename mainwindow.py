@@ -112,9 +112,7 @@ class Ui_MainWindow(object):
         print("recharge")
 
     def exportClick(self):
-        print("export")
-        index = self.ui_export.status_drop.currentIndex()
-        print(index)
+        self.exportData()
 
     def loginClick(self):
         # Switch to the second page
@@ -122,11 +120,12 @@ class Ui_MainWindow(object):
         self.password = self.ui_login.password_et.text()
         self.userData = login_admin(self.username, self.password)
         if self.userData is not None:
-            self.ui_export.remain_point.setText(f"当前剩余点数：{self.userData.point}")
-            self.stackedWidget.setCurrentIndex(2)
-            if self.refreshThread is None:
-                self.refreshThread = Thread(target=self.readCookies)
-                self.refreshThread.start()
+            print("login success")
+            # self.ui_export.remain_point.setText(f"当前剩余点数：{self.userData.point}")
+            # self.stackedWidget.setCurrentIndex(2)
+            # if self.refreshThread is None:
+            #     self.refreshThread = Thread(target=self.readCookies)
+            #     self.refreshThread.start()
         else:
             QMessageBox.warning(self.login_page, "提示", "用户名或密码错误")
 
@@ -170,7 +169,7 @@ class Ui_MainWindow(object):
         print(totalPage)
         progress = 100 / totalPage - 5
         progress_string = f"{progress:.1f}"
-        self.progress.setText(f"当前导出进度：{progress_string}%")
+        self.ui_export.export_status.setText(f"当前导出进度：{progress_string}%")
         self.breakFlag = False
         for i in range(2, totalPage + 1):
             result = get_order_list(i, nextKey, self.custom_cookie)
@@ -194,12 +193,12 @@ class Ui_MainWindow(object):
 
             progress = 100 * i / totalPage - 5
             progress_string = f"{progress:.1f}"
-            self.progress.setText(f"当前导出进度：{progress_string}%")
+            self.ui_export.export_status.setText(f"当前导出进度：{progress_string}%")
 
         save_xml(self.path)
         progress = 100
         progress_string = f"{progress:.1f}"
-        self.progress.setText(f"当前导出进度：已完成")
+        self.ui_export.export_status.setText(f"当前导出进度：已完成")
 
     def readCookies(self):
 

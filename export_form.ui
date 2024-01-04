@@ -224,6 +224,24 @@
     <string>充值</string>
    </property>
   </widget>
+  <widget class="QLabel" name="export_status">
+   <property name="geometry">
+    <rect>
+     <x>510</x>
+     <y>140</y>
+     <width>221</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>导出状态：未导出</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
