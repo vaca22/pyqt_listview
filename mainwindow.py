@@ -34,10 +34,10 @@ class Ui_MainWindow(object):
         self.ui_login.setupUi(self.login_page)
         self.ui_login.pushButton.clicked.connect(self.loginClick)
 
-        self.login_page.setObjectName("page")
+        self.login_page.setObjectName("login_page")
         # self.stackedWidget.addWidget(self.login_page)
         self.export_page = QtWidgets.QWidget()
-        self.export_page.setObjectName("page_2")
+        self.export_page.setObjectName("export_form")
 
         self.ui_export = Ui_ExportForm()
         self.ui_export.setupUi(self.export_page)
@@ -58,8 +58,6 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        # Layout for the first page
-        # first_page_layout = QtWidgets.QVBoxLayout(self.login_page)
 
     def rechargeClick(self):
         print("recharge")
