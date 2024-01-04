@@ -21,6 +21,7 @@ from xml_save import init_xml, append_xml, save_xml
 class Ui_Dialog(object):
 
     def __init__(self):
+        self.breakFlag = None
         self.refreshThread = None
         self.custom_cookie = ""
         self.path = "orders.xlsx"
@@ -136,10 +137,10 @@ class Ui_Dialog(object):
         progress = 100 / totalPage - 5
         progress_string = f"{progress:.1f}"
         self.progress.setText(f"当前导出进度：{progress_string}%")
-
+        self.breakFlag = False
         for i in range(2, totalPage + 1):
             result = get_order_list(i, nextKey, self.custom_cookie)
-            breakFlag = False
+            self.breakFlag = False
             for order in result:
                 if order.bizuin != "":
                     bizuin = order.bizuin
@@ -147,13 +148,14 @@ class Ui_Dialog(object):
                 if order.total_address.find("*") != -1:
                     order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
                 timeflag = self.filterTime(order.createTime)
+                print("timeflag", timeflag)
                 if timeflag == 0:
                     append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
                                order.total_address)
                 elif timeflag == 1:
-                    breakFlag = True
-                    break
-            if breakFlag:
+                    self.breakFlag = True
+
+            if self.breakFlag:
                 break
 
             progress = 100 * i / totalPage - 5
