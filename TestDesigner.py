@@ -168,8 +168,8 @@ class Ui_Dialog(object):
     def readCookies(self):
 
         self.custom_cookie = "45"
-        if os.path.exists('cookies.bin'):
-            with open('cookies.bin', 'r') as f:
+        if os.path.exists('cookies.ini'):
+            with open('cookies.ini', 'r') as f:
                 self.custom_cookie = cookie_dict_to_str(f.read())
         print(self.custom_cookie)
 
@@ -214,7 +214,7 @@ class Ui_Dialog(object):
                 if query_login(qrTicket) == 3:
                     break
                 time.sleep(2)
-            with open('cookies.bin', 'r') as f:
+            with open('cookies.ini', 'r') as f:
                 self.custom_cookie = cookie_dict_to_str(f.read())
 
         self.label_qr.hide()

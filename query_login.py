@@ -39,7 +39,7 @@ def query_login(ticket):
         cookies = response.cookies
         cookies_dict = cookies.get_dict()
         print(cookies_dict)
-        with open('cookies.bin', 'w') as f:
+        with open('cookies.ini', 'w') as f:
             f.write(str(cookies_dict))
 
     return status

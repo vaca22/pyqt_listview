@@ -1,6 +1,4 @@
 import sys
-import json
-import requests
 from PyQt5.QtWidgets import QApplication,  QDialog
 
 

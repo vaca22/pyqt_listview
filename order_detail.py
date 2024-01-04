@@ -1,7 +1,7 @@
 import json
 import requests
 
-requests.packages.urllib3.disable_warnings()
+
 
 
 def find_key(data, target_key):
