@@ -27,6 +27,7 @@ class Ui_Dialog(object):
         self.path = "orders.xlsx"
         self.exportThread = None
 
+
     def on_pushrefresh_clicked(self):
         print("pushrefresh button was clicked")
         # check if thread is None
@@ -54,6 +55,7 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(541, 339)
+        Dialog.setStyleSheet("background-image: url(op8.png);")
         self.label_qr = QtWidgets.QLabel(Dialog)
         self.label_qr.setGeometry(QtCore.QRect(240, 50, 340, 261))
         self.label_qr.setText("")
