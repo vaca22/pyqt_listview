@@ -11,6 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 
+from export_form import Ui_ExportForm
 from login import Ui_Login_Form
 
 
@@ -29,16 +30,22 @@ class Ui_MainWindow(object):
         self.stackedWidget.setGeometry(QtCore.QRect(19, 9, 711, 481))
         self.stackedWidget.setObjectName("stackedWidget")
         self.login_page = QtWidgets.QWidget()
-        self.ui_login=Ui_Login_Form()
+        self.ui_login = Ui_Login_Form()
         self.ui_login.setupUi(self.login_page)
         self.ui_login.pushButton.clicked.connect(self.loginClick)
 
-
         self.login_page.setObjectName("page")
-        self.stackedWidget.addWidget(self.login_page)
-        self.page_2 = QtWidgets.QWidget()
-        self.page_2.setObjectName("page_2")
-        self.stackedWidget.addWidget(self.page_2)
+        # self.stackedWidget.addWidget(self.login_page)
+        self.export_page = QtWidgets.QWidget()
+        self.export_page.setObjectName("page_2")
+
+        self.ui_export = Ui_ExportForm()
+        self.ui_export.setupUi(self.export_page)
+
+        self.ui_export.export_bt.clicked.connect(self.exportClick)
+        self.ui_export.recharge.clicked.connect(self.rechargeClick)
+
+        self.stackedWidget.addWidget(self.export_page)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 22))
@@ -51,17 +58,22 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-
         # Layout for the first page
         # first_page_layout = QtWidgets.QVBoxLayout(self.login_page)
 
+    def rechargeClick(self):
+        print("recharge")
 
+    def exportClick(self):
+        print("export")
+        index = self.ui_export.status_drop.currentIndex()
+        print(index)
 
     def loginClick(self):
         # Switch to the second page
         self.username = self.ui_login.username_et.text()
         self.password = self.ui_login.password_et.text()
-        if(self.username == 'admin' and self.password == 'admin'):
+        if (self.username == 'admin' and self.password == 'admin'):
             self.stackedWidget.setCurrentIndex(1)
         else:
             QMessageBox.warning(self.login_page, "提示", "用户名或密码错误")
@@ -69,4 +81,3 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "微信店铺订单导出工具"))
-
