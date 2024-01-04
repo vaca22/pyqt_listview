@@ -64,12 +64,7 @@ class Ui_MainWindow(object):
         self.ui_register.setupUi(self.register_page)
         self.ui_register.register_bt.clicked.connect(self.registerClick)
 
-
         self.stackedWidget.addWidget(self.register_page)
-
-
-
-
 
         self.export_page = QtWidgets.QWidget()
         self.export_page.setObjectName("export_form")
@@ -93,7 +88,6 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-
     def registerClick(self):
         print("register")
         username = self.ui_register.username_et.text()
@@ -106,14 +100,13 @@ class Ui_MainWindow(object):
         if password != password2:
             QMessageBox.warning(self.register_page, "提示", "两次密码不一致")
             return
-        tel=self.ui_register.tel_et.text()
+        tel = self.ui_register.tel_et.text()
         if len(tel) != 11:
             QMessageBox.warning(self.register_page, "提示", "手机号码格式错误")
             return
         if register(username, password, tel):
             QMessageBox.information(self.register_page, "提示", "注册成功")
             self.stackedWidget.setCurrentIndex(0)
-
 
     def rechargeClick(self):
         print("recharge")
@@ -127,7 +120,7 @@ class Ui_MainWindow(object):
         # Switch to the second page
         self.username = self.ui_login.username_et.text()
         self.password = self.ui_login.password_et.text()
-        self.userData=login_admin(self.username, self.password)
+        self.userData = login_admin(self.username, self.password)
         if self.userData is not None:
             self.ui_export.remain_point.setText(f"当前剩余点数：{self.userData.point}")
             self.stackedWidget.setCurrentIndex(2)
@@ -141,13 +134,15 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "微信店铺订单导出工具"))
 
-
-
     def filterTime(self, currentDateTime):
         print(currentDateTime)
         currentPyDateTime = QDateTime.fromString(str(currentDateTime), "yyyy-MM-dd HH:mm:ss")
-        beginTime = self.beginTimeView.dateTime().toPyDateTime()
-        endTime = self.endTimeView.dateTime().toPyDateTime()
+        beginDate = self.ui_export.begin_date.date()
+        beginDateTime = self.ui_export.begin_time.time()
+        beginTime = QDateTime(beginDate, beginDateTime)
+        endDate = self.ui_export.end_date.date()
+        endDateTime = self.ui_export.end_time.time()
+        endTime = QDateTime(endDate, endDateTime)
         if currentPyDateTime < beginTime:
             return 1
         elif currentPyDateTime > endTime:
@@ -234,7 +229,7 @@ class Ui_MainWindow(object):
                 "Accept-Language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,ja-JP;q=0.6,ja;q=0.5",
             }
 
-            response = requests.get(url, headers=headers,verify=False)
+            response = requests.get(url, headers=headers, verify=False)
             json_data = json.loads(response.text)
             qrcodeImg = json_data["qrcodeImg"]
             qrTicket = json_data["qrTicket"]
@@ -245,7 +240,7 @@ class Ui_MainWindow(object):
             decoded_bytes = base64.b64decode(base64_string)
             with open('qrcode.png', 'wb') as f:
                 f.write(decoded_bytes)
-            pixmap = QtGui.QPixmap( 'qrcode.png')
+            pixmap = QtGui.QPixmap('qrcode.png')
 
             # Scale the image to fit the label
             pixmap = pixmap.scaled(self.ui_export.qrcode.size(), QtCore.Qt.KeepAspectRatio)
