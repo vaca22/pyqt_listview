@@ -125,6 +125,11 @@ class Ui_MainWindow(object):
         print("recharge")
 
     def exportClick(self):
+        if self.userData.point <= 0:
+            QMessageBox.warning(self.export_page, "提示", "点数不足")
+            return
+
+
         if self.exportThread is None:
             options = QtWidgets.QFileDialog.Options()
             options |= QtWidgets.QFileDialog.DontUseNativeDialog
@@ -274,6 +279,10 @@ class Ui_MainWindow(object):
 
         save_xml(self.path)
         self.userData.point -= export_num
+        if self.userData.point < 0:
+            export_num = self.userData.point
+            self.userData.point = 0
+
         self.ui_export.remain_point.setText(f"剩余点数：{self.userData.point}")
         use_point(self.userData.userId, self.userData.token, export_num)
         progress = 100
