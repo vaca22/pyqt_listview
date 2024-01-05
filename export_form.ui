@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>500</height>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,29 +26,11 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="remain_point">
-   <property name="geometry">
-    <rect>
-     <x>50</x>
-     <y>130</y>
-     <width>221</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>16</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>剩余点数：500</string>
-   </property>
-  </widget>
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>240</y>
+     <y>200</y>
      <width>361</width>
      <height>201</height>
     </rect>
@@ -85,7 +67,7 @@
      <rect>
       <x>20</x>
       <y>110</y>
-      <width>54</width>
+      <width>71</width>
       <height>16</height>
      </rect>
     </property>
@@ -118,7 +100,7 @@
      <rect>
       <x>20</x>
       <y>150</y>
-      <width>54</width>
+      <width>71</width>
       <height>16</height>
      </rect>
     </property>
@@ -151,7 +133,7 @@
      <rect>
       <x>100</x>
       <y>70</y>
-      <width>68</width>
+      <width>101</width>
       <height>22</height>
      </rect>
     </property>
@@ -173,46 +155,28 @@
   <widget class="QLabel" name="login_status">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>20</y>
-     <width>251</width>
+     <x>510</x>
+     <y>30</y>
+     <width>181</width>
      <height>41</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>18</pointsize>
+     <pointsize>12</pointsize>
     </font>
    </property>
    <property name="text">
-    <string>当前状态：已登录</string>
+    <string/>
    </property>
   </widget>
   <widget class="QPushButton" name="export_bt">
    <property name="geometry">
     <rect>
      <x>520</x>
-     <y>350</y>
+     <y>400</y>
      <width>171</width>
-     <height>91</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>20</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>导出XLSX</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="recharge">
-   <property name="geometry">
-    <rect>
-     <x>270</x>
-     <y>140</y>
-     <width>101</width>
-     <height>51</height>
+     <height>41</height>
     </rect>
    </property>
    <property name="font">
@@ -221,25 +185,109 @@
     </font>
    </property>
    <property name="text">
-    <string>充值</string>
+    <string>导出XLSX</string>
    </property>
   </widget>
   <widget class="QLabel" name="export_status">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
-     <x>510</x>
-     <y>140</y>
+     <x>530</x>
+     <y>360</y>
      <width>221</width>
-     <height>51</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>16</pointsize>
+     <pointsize>12</pointsize>
     </font>
    </property>
    <property name="text">
-    <string>导出状态：未导出</string>
+    <string>导出状态：未开始</string>
+   </property>
+  </widget>
+  <widget class="QFrame" name="frame_charge">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>30</y>
+     <width>261</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <property name="lineWidth">
+    <number>5</number>
+   </property>
+   <widget class="QPushButton" name="recharge">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>充值</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="remain_point">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>80</y>
+      <width>221</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>剩余点数：500</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="logout">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>430</y>
+     <width>75</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>退出登录</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="switch_account">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>430</y>
+     <width>91</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>切换店铺号</string>
    </property>
   </widget>
  </widget>

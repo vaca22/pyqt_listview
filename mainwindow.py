@@ -73,8 +73,10 @@ class Ui_MainWindow(object):
         self.ui_export = Ui_ExportForm()
         self.ui_export.setupUi(self.export_page)
 
+        self.ui_export.status_drop.addItems(["全部", "已完成", "待发货"])
         self.ui_export.export_bt.clicked.connect(self.exportClick)
         self.ui_export.recharge.clicked.connect(self.rechargeClick)
+        self.ui_export.switch_account.clicked.connect(self.resetCookie)
 
         self.stackedWidget.addWidget(self.export_page)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -146,6 +148,12 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "微信店铺订单导出工具"))
+    def resetCookie(self):
+        self.custom_cookie = ""
+        self.settings.setValue("cookie", self.custom_cookie)
+        if self.refreshThread is None:
+            self.refreshThread = Thread(target=self.readCookies)
+            self.refreshThread.start()
 
     def filterTime(self, currentDateTime, status):
         print(currentDateTime)
@@ -229,13 +237,10 @@ class Ui_MainWindow(object):
         self.ui_export.export_status.setText(f"进度：已完成")
 
     def readCookies(self):
-
-
-        print(self.custom_cookie)
-
         # print type
         if not test_login(self.custom_cookie):
             self.ui_export.login_status.setText("状态：未登录")
+
             url = "https://channels.weixin.qq.com/shop-faas/mmecnodelogin/getLoginQrCode?token=&lang=zh_CN&login_appid="
 
             headers = {
@@ -271,6 +276,7 @@ class Ui_MainWindow(object):
             pixmap = pixmap.scaled(self.ui_export.qrcode.size(), QtCore.Qt.KeepAspectRatio)
 
             self.ui_export.qrcode.setPixmap(pixmap)
+            self.ui_export.qrcode.show()
             while True:
                 self.custom_cookie = query_login(qrTicket)
                 if self.custom_cookie is not None:
@@ -284,4 +290,5 @@ class Ui_MainWindow(object):
         self.ui_export.export_status.show()
         self.ui_export.export_status.adjustSize()
         self.ui_export.login_status.setText("状态：已登录")
+        self.refreshThread = None
         return self.custom_cookie
