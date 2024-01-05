@@ -18,6 +18,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QDateTime
 from PyQt5.QtWidgets import QMessageBox
 
+from QRCodeWindow import QRCodeWindow
 from admin import register, login_admin, use_point
 from cookies_convert import cookie_dict_to_str
 from export_form import Ui_ExportForm
@@ -43,6 +44,7 @@ class Ui_MainWindow(object):
         self.custom_cookie = self.settings.value("cookie", "")
 
     def setupUi(self, MainWindow):
+        self.MainWindow = MainWindow
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 500)
         MainWindow.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
@@ -123,6 +125,8 @@ class Ui_MainWindow(object):
 
     def rechargeClick(self):
         print("recharge")
+        qr_widget = QRCodeWindow("Your text here",self.MainWindow)
+        qr_widget.show()
 
     def exportClick(self):
         if self.userData.point <= 0:
