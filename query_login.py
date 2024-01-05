@@ -1,7 +1,7 @@
 import requests
 import json
 
-
+from cookies_convert import cookie_dict_to_str
 
 
 def query_login(ticket):
@@ -28,7 +28,7 @@ def query_login(ticket):
         "Accept-Language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,ja-JP;q=0.6,ja;q=0.5"
     }
 
-    response = requests.get(url, params=params, headers=headers,verify=False)
+    response = requests.get(url, params=params, headers=headers, verify=False)
 
     json_data = json.loads(response.text)
 
@@ -37,9 +37,7 @@ def query_login(ticket):
 
     if status == 3:
         cookies = response.cookies
-        cookies_dict = cookies.get_dict()
-        print(cookies_dict)
-        with open('cookies.ini', 'w') as f:
-            f.write(str(cookies_dict))
+        cookies_str = cookie_dict_to_str(str(cookies.get_dict()))
+        return cookies_str
 
-    return status
+    return None

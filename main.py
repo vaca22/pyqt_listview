@@ -5,8 +5,6 @@ import requests
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication,  QDialog
 
-
-from TestDesigner import Ui_Dialog
 from mainwindow import Ui_MainWindow
 
 

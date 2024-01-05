@@ -99,7 +99,6 @@ class Ui_ExportForm(object):
         self.end_lb.setText(_translate("ExportForm", "结束时间"))
         self.end_lb.adjustSize()
         self.status_lb.setText(_translate("ExportForm", "状态"))
-        self.login_status.setText(_translate("ExportForm", "当前状态：已登录"))
         self.export_bt.setText(_translate("ExportForm", "导出XLSX"))
         self.recharge.setText(_translate("ExportForm", "充值"))
         self.export_status.setText(_translate("ExportForm", "导出状态：未导出"))

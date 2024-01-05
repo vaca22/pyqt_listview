@@ -37,9 +37,10 @@ class Ui_MainWindow(object):
         self.password = None
         self.breakFlag = None
         self.refreshThread = None
-        self.custom_cookie = ""
         self.path = "orders.xlsx"
         self.exportThread = None
+        self.settings = QtCore.QSettings("settings.ini", "settings")
+        self.custom_cookie = self.settings.value("cookie", "")
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -229,14 +230,12 @@ class Ui_MainWindow(object):
 
     def readCookies(self):
 
-        self.custom_cookie = "45"
-        if os.path.exists('cookies.ini'):
-            with open('cookies.ini', 'r') as f:
-                self.custom_cookie = cookie_dict_to_str(f.read())
+
         print(self.custom_cookie)
 
         # print type
         if not test_login(self.custom_cookie):
+            self.ui_export.login_status.setText("状态：未登录")
             url = "https://channels.weixin.qq.com/shop-faas/mmecnodelogin/getLoginQrCode?token=&lang=zh_CN&login_appid="
 
             headers = {
@@ -264,26 +263,25 @@ class Ui_MainWindow(object):
             print(qrTicket)
             base64_string = qrcodeImg
             decoded_bytes = base64.b64decode(base64_string)
-            with open('qrcode.png', 'wb') as f:
-                f.write(decoded_bytes)
-            pixmap = QtGui.QPixmap('qrcode.png')
+
+            pixmap = QtGui.QPixmap()
+            pixmap.loadFromData(decoded_bytes)
 
             # Scale the image to fit the label
             pixmap = pixmap.scaled(self.ui_export.qrcode.size(), QtCore.Qt.KeepAspectRatio)
 
             self.ui_export.qrcode.setPixmap(pixmap)
             while True:
-                if query_login(qrTicket) == 3:
+                self.custom_cookie = query_login(qrTicket)
+                if self.custom_cookie is not None:
                     break
                 time.sleep(2)
-            with open('cookies.ini', 'r') as f:
-                self.custom_cookie = cookie_dict_to_str(f.read())
+            self.settings.setValue("cookie", self.custom_cookie)
+
 
         self.ui_export.qrcode.hide()
         self.ui_export.export_status.setText("进度：未开始")
         self.ui_export.export_status.show()
         self.ui_export.export_status.adjustSize()
-        if os.path.exists("qrcode.png"):
-            os.remove("qrcode.png")
         self.ui_export.login_status.setText("状态：已登录")
         return self.custom_cookie
