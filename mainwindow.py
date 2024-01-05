@@ -125,7 +125,7 @@ class Ui_MainWindow(object):
 
     def rechargeClick(self):
         print("recharge")
-        qr_widget = QRCodeWindow("Your text here",self.MainWindow)
+        qr_widget = QRCodeWindow("https://u.wechat.com/MAw0cyotVPHgK2pDtehv9-w",self.MainWindow)
         qr_widget.show()
 
     def exportClick(self):
