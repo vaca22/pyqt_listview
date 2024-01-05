@@ -39,7 +39,7 @@ class Ui_MainWindow(object):
         self.refreshThread = None
         self.path = "orders.xlsx"
         self.exportThread = None
-        self.settings = QtCore.QSettings("settings.ini", "settings")
+        self.settings = QtCore.QSettings("settings.ini", "wx_shop_settings")
         self.custom_cookie = self.settings.value("cookie", "")
 
     def setupUi(self, MainWindow):
