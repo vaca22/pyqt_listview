@@ -37,7 +37,7 @@ class Ui_MainWindow(object):
         self.password = None
         self.breakFlag = None
         self.refreshThread = None
-        self.path = "orders.xlsx"
+        self.path = None
         self.exportThread = None
         self.settings = QtCore.QSettings("settings.ini", "wx_shop_settings")
         self.custom_cookie = self.settings.value("cookie", "")
@@ -84,12 +84,10 @@ class Ui_MainWindow(object):
 
         self.stackedWidget.addWidget(self.export_page)
 
-
         if self.loginAuto():
             self.stackedWidget.setCurrentIndex(2)
         else:
             self.stackedWidget.setCurrentIndex(0)
-
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -158,6 +156,7 @@ class Ui_MainWindow(object):
             return True
         else:
             return False
+
     def loginClick(self):
         # Switch to the second page
         self.username = self.ui_login.username_et.text()
@@ -182,14 +181,10 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "微信店铺订单导出工具"))
 
-
-
     def logoutClick(self):
         self.settings.setValue("username", "")
         self.settings.setValue("password", "")
         self.stackedWidget.setCurrentIndex(0)
-
-
 
     def resetCookie(self):
         self.custom_cookie = ""
