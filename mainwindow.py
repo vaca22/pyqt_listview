@@ -54,6 +54,7 @@ class Ui_MainWindow(object):
         self.login_page = QtWidgets.QWidget()
         self.ui_login = Ui_Login_Form()
         self.ui_login.setupUi(self.login_page)
+        self.ui_login.password_et.setEchoMode(QtWidgets.QLineEdit.Password)
         self.ui_login.pushButton.clicked.connect(self.loginClick)
         self.ui_login.register_bt.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
 
@@ -64,6 +65,8 @@ class Ui_MainWindow(object):
         self.ui_register = Ui_Register_Form()
         self.ui_register.setupUi(self.register_page)
         self.ui_register.register_bt.clicked.connect(self.registerClick)
+        self.ui_register.password_et.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.ui_register.password2_et.setEchoMode(QtWidgets.QLineEdit.Password)
 
         self.stackedWidget.addWidget(self.register_page)
 
@@ -131,10 +134,10 @@ class Ui_MainWindow(object):
         # Switch to the second page
         self.username = self.ui_login.username_et.text()
         self.password = self.ui_login.password_et.text()
-        # self.userData = login_admin(self.username, self.password)
-        if self.userData is None:
+        self.userData = login_admin(self.username, self.password)
+        if self.userData is not None:
             print("login success")
-            # self.ui_export.remain_point.setText(f"剩余点数：{self.userData.point}")
+            self.ui_export.remain_point.setText(f"剩余点数：{self.userData.point}")
             self.stackedWidget.setCurrentIndex(2)
             self.ui_export.end_date.setDateTime(QtCore.QDateTime.currentDateTime())
             self.ui_export.begin_date.setDateTime(QtCore.QDateTime.currentDateTime().addDays(-7))
@@ -148,6 +151,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "微信店铺订单导出工具"))
+
     def resetCookie(self):
         self.custom_cookie = ""
         self.settings.setValue("cookie", self.custom_cookie)
@@ -283,7 +287,6 @@ class Ui_MainWindow(object):
                     break
                 time.sleep(2)
             self.settings.setValue("cookie", self.custom_cookie)
-
 
         self.ui_export.qrcode.hide()
         self.ui_export.export_status.setText("进度：未开始")

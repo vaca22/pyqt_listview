@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>500</height>
+    <width>780</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>350</x>
+     <x>310</x>
      <y>300</y>
      <width>130</width>
      <height>51</height>
@@ -34,10 +34,10 @@
   <widget class="QLabel" name="username_lb">
    <property name="geometry">
     <rect>
-     <x>260</x>
-     <y>115</y>
-     <width>54</width>
-     <height>21</height>
+     <x>220</x>
+     <y>110</y>
+     <width>71</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
@@ -52,10 +52,10 @@
   <widget class="QLabel" name="password_lb">
    <property name="geometry">
     <rect>
-     <x>260</x>
-     <y>205</y>
-     <width>54</width>
-     <height>21</height>
+     <x>220</x>
+     <y>190</y>
+     <width>71</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
@@ -70,9 +70,9 @@
   <widget class="QLineEdit" name="username_et">
    <property name="geometry">
     <rect>
-     <x>330</x>
+     <x>280</x>
      <y>110</y>
-     <width>181</width>
+     <width>191</width>
      <height>31</height>
     </rect>
    </property>
@@ -80,19 +80,22 @@
   <widget class="QLineEdit" name="password_et">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>200</y>
-     <width>181</width>
+     <x>280</x>
+     <y>190</y>
+     <width>191</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="inputMethodHints">
+    <set>Qt::ImhNone</set>
    </property>
   </widget>
   <widget class="QLabel" name="title_lb">
    <property name="geometry">
     <rect>
-     <x>340</x>
+     <x>300</x>
      <y>10</y>
-     <width>151</width>
+     <width>201</width>
      <height>61</height>
     </rect>
    </property>
