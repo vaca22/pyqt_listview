@@ -80,8 +80,17 @@ class Ui_MainWindow(object):
         self.ui_export.export_bt.clicked.connect(self.exportClick)
         self.ui_export.recharge.clicked.connect(self.rechargeClick)
         self.ui_export.switch_account.clicked.connect(self.resetCookie)
+        self.ui_export.logout.clicked.connect(self.logoutClick)
 
         self.stackedWidget.addWidget(self.export_page)
+
+
+        if self.loginAuto():
+            self.stackedWidget.setCurrentIndex(2)
+        else:
+            self.stackedWidget.setCurrentIndex(0)
+
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 22))
@@ -130,6 +139,25 @@ class Ui_MainWindow(object):
                 self.exportThread = Thread(target=self.exportData)
                 self.exportThread.start()
 
+    def loginAuto(self):
+        self.username = self.settings.value("username", "")
+        self.password = self.settings.value("password", "")
+        self.userData = login_admin(self.username, self.password)
+        if self.userData is not None:
+            print("login success")
+            self.settings.setValue("username", self.username)
+            self.settings.setValue("password", self.password)
+            self.ui_export.remain_point.setText(f"剩余点数：{self.userData.point}")
+            self.stackedWidget.setCurrentIndex(2)
+            self.ui_export.end_date.setDateTime(QtCore.QDateTime.currentDateTime())
+            self.ui_export.begin_date.setDateTime(QtCore.QDateTime.currentDateTime().addDays(-7))
+
+            if self.refreshThread is None:
+                self.refreshThread = Thread(target=self.readCookies)
+                self.refreshThread.start()
+            return True
+        else:
+            return False
     def loginClick(self):
         # Switch to the second page
         self.username = self.ui_login.username_et.text()
@@ -137,6 +165,8 @@ class Ui_MainWindow(object):
         self.userData = login_admin(self.username, self.password)
         if self.userData is not None:
             print("login success")
+            self.settings.setValue("username", self.username)
+            self.settings.setValue("password", self.password)
             self.ui_export.remain_point.setText(f"剩余点数：{self.userData.point}")
             self.stackedWidget.setCurrentIndex(2)
             self.ui_export.end_date.setDateTime(QtCore.QDateTime.currentDateTime())
@@ -151,6 +181,15 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "微信店铺订单导出工具"))
+
+
+
+    def logoutClick(self):
+        self.settings.setValue("username", "")
+        self.settings.setValue("password", "")
+        self.stackedWidget.setCurrentIndex(0)
+
+
 
     def resetCookie(self):
         self.custom_cookie = ""
