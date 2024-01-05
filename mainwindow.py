@@ -18,7 +18,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QDateTime
 from PyQt5.QtWidgets import QMessageBox
 
-from admin import register, login_admin
+from admin import register, login_admin, use_point
 from cookies_convert import cookie_dict_to_str
 from export_form import Ui_ExportForm
 from login import Ui_Login_Form
@@ -225,6 +225,7 @@ class Ui_MainWindow(object):
 
     def exportData(self):
         init_xml(self.path)
+        export_num = 0
 
         result = get_order_list(1, None, self.custom_cookie)
         totalPage = 0
@@ -240,6 +241,7 @@ class Ui_MainWindow(object):
             if self.filterTime(order.createTime, order.status) == 0:
                 append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
                            order.total_address)
+                export_num += 1
         print(totalPage)
         progress = 100 / totalPage - 5
         progress_string = f"{progress:.1f}"
@@ -259,6 +261,7 @@ class Ui_MainWindow(object):
                 if timeflag == 0:
                     append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
                                order.total_address)
+                    export_num += 1
                 elif timeflag == 1:
                     self.breakFlag = True
 
@@ -270,6 +273,9 @@ class Ui_MainWindow(object):
             self.ui_export.export_status.setText(f"进度：{progress_string}%")
 
         save_xml(self.path)
+        self.userData.point -= export_num
+        self.ui_export.remain_point.setText(f"剩余点数：{self.userData.point}")
+        use_point(self.userData.userId, self.userData.token, export_num)
         progress = 100
         progress_string = f"{progress:.1f}"
         self.ui_export.export_status.setText(f"进度：已完成")
