@@ -33,6 +33,7 @@ from xml_save import save_xml, append_xml, init_xml
 
 class Ui_MainWindow(object):
     def __init__(self):
+        self.isWxLogin = False
         self.userData = None
         self.username = None
         self.password = None
@@ -132,7 +133,9 @@ class Ui_MainWindow(object):
         if self.userData.point <= 0:
             QMessageBox.warning(self.export_page, "提示", "点数不足")
             return
-
+        if self.isWxLogin is False:
+            QMessageBox.warning(self.export_page, "提示", "请先扫码登录店铺")
+            return
 
         if self.exportThread is None:
             options = QtWidgets.QFileDialog.Options()
@@ -188,7 +191,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "微信店铺订单导出工具"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "订单导出助手"))
 
     def logoutClick(self):
         self.settings.setValue("username", "")
@@ -233,6 +236,11 @@ class Ui_MainWindow(object):
                     return 3
 
     def exportData(self):
+
+
+
+
+
         init_xml(self.path)
         export_num = 0
 
@@ -292,6 +300,7 @@ class Ui_MainWindow(object):
         progress = 100
         progress_string = f"{progress:.1f}"
         self.ui_export.export_status.setText(f"进度：已完成")
+        self.exportThread = None
 
     def readCookies(self):
         # print type
@@ -341,6 +350,7 @@ class Ui_MainWindow(object):
                 time.sleep(2)
             self.settings.setValue("cookie", self.custom_cookie)
 
+        self.isWxLogin = True
         self.ui_export.qrcode.hide()
         self.ui_export.export_status.setText("进度：未开始")
         self.ui_export.export_status.show()
