@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>780</width>
-    <height>480</height>
+    <width>330</width>
+    <height>298</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,15 +16,15 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>310</x>
-     <y>300</y>
-     <width>130</width>
-     <height>51</height>
+     <x>120</x>
+     <y>220</y>
+     <width>71</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>16</pointsize>
+     <pointsize>12</pointsize>
     </font>
    </property>
    <property name="text">
@@ -34,8 +34,8 @@
   <widget class="QLabel" name="username_lb">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>110</y>
+     <x>20</x>
+     <y>80</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -52,8 +52,8 @@
   <widget class="QLabel" name="password_lb">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>190</y>
+     <x>20</x>
+     <y>150</y>
      <width>71</width>
      <height>31</height>
     </rect>
@@ -70,8 +70,8 @@
   <widget class="QLineEdit" name="username_et">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>110</y>
+     <x>90</x>
+     <y>80</y>
      <width>191</width>
      <height>31</height>
     </rect>
@@ -80,8 +80,8 @@
   <widget class="QLineEdit" name="password_et">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>190</y>
+     <x>90</x>
+     <y>150</y>
      <width>191</width>
      <height>31</height>
     </rect>
@@ -93,7 +93,7 @@
   <widget class="QLabel" name="title_lb">
    <property name="geometry">
     <rect>
-     <x>300</x>
+     <x>110</x>
      <y>10</y>
      <width>201</width>
      <height>61</height>
@@ -101,7 +101,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>24</pointsize>
+     <pointsize>18</pointsize>
     </font>
    </property>
    <property name="text">
@@ -109,19 +109,6 @@
    </property>
    <property name="textFormat">
     <enum>Qt::AutoText</enum>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="register_bt">
-   <property name="geometry">
-    <rect>
-     <x>440</x>
-     <y>260</y>
-     <width>75</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>注册</string>
    </property>
   </widget>
  </widget>

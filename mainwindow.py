@@ -33,6 +33,7 @@ from xml_save import save_xml, append_xml, init_xml
 
 class Ui_MainWindow(object):
     def __init__(self):
+        self.isUserLogin = False
         self.isWxLogin = False
         self.userData = None
         self.username = None
@@ -54,43 +55,39 @@ class Ui_MainWindow(object):
         self.stackedWidget = QtWidgets.QStackedWidget(self.centralwidget)
         self.stackedWidget.setGeometry(QtCore.QRect(19, 9, 711, 481))
         self.stackedWidget.setObjectName("stackedWidget")
-        self.login_page = QtWidgets.QWidget()
+        self.login_page = QtWidgets.QDialog()
         self.ui_login = Ui_Login_Form()
         self.ui_login.setupUi(self.login_page)
         self.ui_login.password_et.setEchoMode(QtWidgets.QLineEdit.Password)
         self.ui_login.pushButton.clicked.connect(self.loginClick)
-        self.ui_login.register_bt.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
-
         self.login_page.setObjectName("login_page")
-        self.stackedWidget.addWidget(self.login_page)
-
-        self.register_page = QtWidgets.QWidget()
+        self.register_page = QtWidgets.QDialog()
         self.ui_register = Ui_Register_Form()
         self.ui_register.setupUi(self.register_page)
         self.ui_register.register_bt.clicked.connect(self.registerClick)
         self.ui_register.password_et.setEchoMode(QtWidgets.QLineEdit.Password)
         self.ui_register.password2_et.setEchoMode(QtWidgets.QLineEdit.Password)
-
-        self.stackedWidget.addWidget(self.register_page)
-
         self.export_page = QtWidgets.QWidget()
         self.export_page.setObjectName("export_form")
 
         self.ui_export = Ui_ExportForm()
         self.ui_export.setupUi(self.export_page)
 
-        self.ui_export.status_drop.addItems(["全部", "已完成", "待发货"])
+
+        self.ui_export.rb1.setChecked(True)
         self.ui_export.export_bt.clicked.connect(self.exportClick)
         self.ui_export.recharge.clicked.connect(self.rechargeClick)
         self.ui_export.switch_account.clicked.connect(self.resetCookie)
         self.ui_export.logout.clicked.connect(self.logoutClick)
+        self.ui_export.register_bt.clicked.connect(self.registerPopClick)
+        self.ui_export.login_bt.clicked.connect(self.loginPopClick)
 
         self.stackedWidget.addWidget(self.export_page)
 
         if self.loginAuto():
-            self.stackedWidget.setCurrentIndex(2)
+            pass
         else:
-            self.stackedWidget.setCurrentIndex(0)
+            pass
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -103,6 +100,16 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def registerPopClick(self):
+        print("registerPop")
+        self.register_page.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
+        self.register_page.show()
+
+    def loginPopClick(self):
+        print("loginPop")
+        self.login_page.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
+        self.login_page.show()
 
     def registerClick(self):
         print("register")
@@ -122,7 +129,8 @@ class Ui_MainWindow(object):
             return
         if register(username, password, tel):
             QMessageBox.information(self.register_page, "提示", "注册成功")
-            self.stackedWidget.setCurrentIndex(0)
+            self.register_page.close()
+
 
     def rechargeClick(self):
         print("recharge")
@@ -130,6 +138,10 @@ class Ui_MainWindow(object):
         qr_widget.show()
 
     def exportClick(self):
+        if self.isUserLogin is False:
+            QMessageBox.warning(self.export_page, "提示", "请先登录")
+            return
+
         if self.userData.point <= 0:
             QMessageBox.warning(self.export_page, "提示", "点数不足")
             return
@@ -155,10 +167,11 @@ class Ui_MainWindow(object):
         self.userData = login_admin(self.username, self.password)
         if self.userData is not None:
             print("login success")
+            self.isUserLogin = True
             self.settings.setValue("username", self.username)
             self.settings.setValue("password", self.password)
             self.ui_export.remain_point.setText(f"剩余点数：{self.userData.point}")
-            self.stackedWidget.setCurrentIndex(2)
+
             self.ui_export.end_date.setDateTime(QtCore.QDateTime.currentDateTime())
             self.ui_export.begin_date.setDateTime(QtCore.QDateTime.currentDateTime().addDays(-7))
 
@@ -167,6 +180,7 @@ class Ui_MainWindow(object):
                 self.refreshThread.start()
             return True
         else:
+            self.isUserLogin = False
             return False
 
     def loginClick(self):
@@ -179,13 +193,15 @@ class Ui_MainWindow(object):
             self.settings.setValue("username", self.username)
             self.settings.setValue("password", self.password)
             self.ui_export.remain_point.setText(f"剩余点数：{self.userData.point}")
-            self.stackedWidget.setCurrentIndex(2)
+
             self.ui_export.end_date.setDateTime(QtCore.QDateTime.currentDateTime())
             self.ui_export.begin_date.setDateTime(QtCore.QDateTime.currentDateTime().addDays(-7))
 
             if self.refreshThread is None:
                 self.refreshThread = Thread(target=self.readCookies)
                 self.refreshThread.start()
+            self.isUserLogin = True
+            self.login_page.close()
         else:
             QMessageBox.warning(self.login_page, "提示", "用户名或密码错误")
 
@@ -193,10 +209,14 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "订单导出助手"))
 
+
     def logoutClick(self):
         self.settings.setValue("username", "")
         self.settings.setValue("password", "")
-        self.stackedWidget.setCurrentIndex(0)
+        self.isUserLogin = False
+        QMessageBox.information(self.login_page, "提示", "退出登录成功")
+
+
 
     def resetCookie(self):
         self.custom_cookie = ""
@@ -208,13 +228,19 @@ class Ui_MainWindow(object):
     def filterTime(self, currentDateTime, status):
         print(currentDateTime)
         currentPyDateTime = QDateTime.fromString(str(currentDateTime), "yyyy-MM-dd HH:mm:ss")
-        beginDate = self.ui_export.begin_date.date()
-        beginDateTime = self.ui_export.begin_time.time()
-        beginTime = QDateTime(beginDate, beginDateTime)
-        endDate = self.ui_export.end_date.date()
-        endDateTime = self.ui_export.end_time.time()
-        endTime = QDateTime(endDate, endDateTime)
-        wantStatus = self.ui_export.status_drop.currentIndex()
+        beginTime = self.ui_export.begin_date.dateTime()
+        endTime = self.ui_export.end_date.dateTime()
+        rb1 = self.ui_export.rb1.isChecked()
+        rb2 = self.ui_export.rb2.isChecked()
+        rb3 = self.ui_export.rb3.isChecked()
+        wantStatus = 0
+        if rb1:
+            wantStatus = 2
+        elif rb2:
+            wantStatus = 1
+        elif rb3:
+            wantStatus = 0
+
         if currentPyDateTime < beginTime:
             return 1
         elif currentPyDateTime > endTime:
@@ -305,7 +331,7 @@ class Ui_MainWindow(object):
     def readCookies(self):
         # print type
         if not test_login(self.custom_cookie):
-            self.ui_export.login_status.setText("状态：未登录")
+            self.ui_export.login_status.setText("扫码登录店铺")
 
             url = "https://channels.weixin.qq.com/shop-faas/mmecnodelogin/getLoginQrCode?token=&lang=zh_CN&login_appid="
 
@@ -355,6 +381,6 @@ class Ui_MainWindow(object):
         self.ui_export.export_status.setText("进度：未开始")
         self.ui_export.export_status.show()
         self.ui_export.export_status.adjustSize()
-        self.ui_export.login_status.setText("状态：已登录")
+        self.ui_export.login_status.setText("状态：店铺已登录")
         self.refreshThread = None
         return self.custom_cookie
