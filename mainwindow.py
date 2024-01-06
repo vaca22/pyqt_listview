@@ -280,41 +280,45 @@ class Ui_MainWindow(object):
                 append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
                            order.total_address)
                 export_num += 1
+                self.userData.point -= 1
+                if self.userData.point <= 0:
+                    break
         print(totalPage)
         progress = 100 / totalPage - 5
         progress_string = f"{progress:.1f}"
         self.ui_export.export_status.setText(f"进度：{progress_string}%")
         self.breakFlag = False
-        for i in range(2, totalPage + 1):
-            result = get_order_list(i, nextKey, self.custom_cookie)
-            self.breakFlag = False
-            for order in result:
-                if order.bizuin != "":
-                    bizuin = order.bizuin
-                nextKey = order.nextKey
-                if order.total_address.find("*") != -1:
-                    order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
-                timeflag = self.filterTime(order.createTime, order.status)
-                print("timeflag", timeflag)
-                if timeflag == 0:
-                    append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
-                               order.total_address)
-                    export_num += 1
-                elif timeflag == 1:
-                    self.breakFlag = True
-
-            if self.breakFlag:
-                break
-
-            progress = 100 * i / totalPage - 5
-            progress_string = f"{progress:.1f}"
-            self.ui_export.export_status.setText(f"进度：{progress_string}%")
+        if self.userData.point > 0:
+            for i in range(2, totalPage + 1):
+                result = get_order_list(i, nextKey, self.custom_cookie)
+                self.breakFlag = False
+                for order in result:
+                    if order.bizuin != "":
+                        bizuin = order.bizuin
+                    nextKey = order.nextKey
+                    if order.total_address.find("*") != -1:
+                        order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
+                    timeflag = self.filterTime(order.createTime, order.status)
+                    print("timeflag", timeflag)
+                    if timeflag == 0:
+                        append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
+                                   order.total_address)
+                        export_num += 1
+                        self.userData.point -= 1
+                        if self.userData.point <= 0:
+                            self.breakFlag = True
+                            break
+                    elif timeflag == 1:
+                        self.breakFlag = True
+                if self.breakFlag:
+                    break
+                progress = 100 * i / totalPage - 5
+                progress_string = f"{progress:.1f}"
+                self.ui_export.export_status.setText(f"进度：{progress_string}%")
 
         save_xml(self.path)
-        self.userData.point -= export_num
-        if self.userData.point < 0:
-            export_num = self.userData.point
-            self.userData.point = 0
+
+
 
         self.ui_export.remain_point.setText(f"剩余点数：{self.userData.point}")
         use_point(self.userData.userId, self.userData.token, export_num)
