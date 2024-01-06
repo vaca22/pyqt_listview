@@ -20,6 +20,7 @@ from PyQt5.QtWidgets import QMessageBox
 
 from QRCodeWindow import QRCodeWindow
 from admin import register, login_admin, use_point
+from confirm_dialog import Ui_ConfirmPop
 from cookies_convert import cookie_dict_to_str
 from export_form import Ui_ExportForm
 from login import Ui_Login_Form
@@ -55,6 +56,16 @@ class Ui_MainWindow(object):
         self.stackedWidget = QtWidgets.QStackedWidget(self.centralwidget)
         self.stackedWidget.setGeometry(QtCore.QRect(19, 9, 711, 481))
         self.stackedWidget.setObjectName("stackedWidget")
+
+
+        self.confirm_page = QtWidgets.QDialog()
+        self.ui_confirm = Ui_ConfirmPop()
+        self.ui_confirm.setupUi(self.confirm_page)
+        self.ui_confirm.yes_bt.clicked.connect(self.exportClick)
+        self.ui_confirm.no_bt.clicked.connect(self.confirm_page.close)
+
+
+
         self.login_page = QtWidgets.QDialog()
         self.ui_login = Ui_Login_Form()
         self.ui_login.setupUi(self.login_page)
@@ -75,7 +86,7 @@ class Ui_MainWindow(object):
 
 
         self.ui_export.rb1.setChecked(True)
-        self.ui_export.export_bt.clicked.connect(self.exportClick)
+        self.ui_export.export_bt.clicked.connect(self.export_pop)
         self.ui_export.recharge.clicked.connect(self.rechargeClick)
         self.ui_export.switch_account.clicked.connect(self.resetCookie)
         self.ui_export.logout.clicked.connect(self.logoutClick)
@@ -137,7 +148,7 @@ class Ui_MainWindow(object):
         qr_widget = QRCodeWindow("https://u.wechat.com/MAw0cyotVPHgK2pDtehv9-w",self.MainWindow)
         qr_widget.show()
 
-    def exportClick(self):
+    def export_pop(self):
         if self.isUserLogin is False:
             QMessageBox.warning(self.export_page, "提示", "请先登录")
             return
@@ -148,6 +159,11 @@ class Ui_MainWindow(object):
         if self.isWxLogin is False:
             QMessageBox.warning(self.export_page, "提示", "请先扫码登录店铺")
             return
+        self.confirm_page.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
+        self.confirm_page.show()
+
+    def exportClick(self):
+        self.confirm_page.close()
 
         if self.exportThread is None:
             options = QtWidgets.QFileDialog.Options()
