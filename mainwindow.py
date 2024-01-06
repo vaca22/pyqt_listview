@@ -262,11 +262,6 @@ class Ui_MainWindow(object):
                     return 3
 
     def exportData(self):
-
-
-
-
-
         init_xml(self.path)
         export_num = 0
 
