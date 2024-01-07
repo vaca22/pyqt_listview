@@ -23,6 +23,7 @@ from admin import register, login_admin, use_point
 from confirm_dialog import Ui_ConfirmPop
 from cookies_convert import cookie_dict_to_str
 from export_form import Ui_ExportForm
+from get_info_name import get_info_name
 from login import Ui_Login_Form
 from order_detail import order_detail
 from order_list import get_order_list
@@ -36,6 +37,7 @@ class Ui_MainWindow(object):
     def __init__(self):
         self.isUserLogin = False
         self.isWxLogin = False
+        self.breakQrThread = False
         self.userData = None
         self.username = None
         self.password = None
@@ -89,6 +91,7 @@ class Ui_MainWindow(object):
         self.ui_export.export_bt.clicked.connect(self.export_pop)
         self.ui_export.recharge.clicked.connect(self.rechargeClick)
         self.ui_export.switch_account.clicked.connect(self.resetCookie)
+        self.ui_export.refresh_qr.clicked.connect(self.resetCookie)
         self.ui_export.logout.clicked.connect(self.logoutClick)
         self.ui_export.register_bt.clicked.connect(self.registerPopClick)
         self.ui_export.login_bt.clicked.connect(self.loginPopClick)
@@ -193,6 +196,7 @@ class Ui_MainWindow(object):
         if self.userData is not None:
             print("login success")
             self.isUserLogin = True
+            self.ui_export.frame_unlogin.hide()
             self.settings.setValue("username", self.username)
             self.settings.setValue("password", self.password)
             self.ui_export.remain_point.setText(f"剩余点数：{self.userData.point}")
@@ -226,6 +230,7 @@ class Ui_MainWindow(object):
                 self.refreshThread = Thread(target=self.readCookies)
                 self.refreshThread.start()
             self.isUserLogin = True
+            self.ui_export.frame_unlogin.hide()
             self.login_page.close()
         else:
             QMessageBox.warning(self.login_page, "提示", "用户名或密码错误")
@@ -239,14 +244,22 @@ class Ui_MainWindow(object):
         self.settings.setValue("username", "")
         self.settings.setValue("password", "")
         self.isUserLogin = False
+        self.ui_export.frame_unlogin.show()
         QMessageBox.information(self.login_page, "提示", "退出登录成功")
 
 
 
     def resetCookie(self):
+        self.breakQrThread = True
+        self.isWxLogin = False
+        self.ui_export.refresh_qr.show()
         self.custom_cookie = ""
         self.settings.setValue("cookie", self.custom_cookie)
         if self.refreshThread is None:
+            self.refreshThread = Thread(target=self.readCookies)
+            self.refreshThread.start()
+        else:
+            self.refreshThread.join()
             self.refreshThread = Thread(target=self.readCookies)
             self.refreshThread.start()
 
@@ -393,18 +406,25 @@ class Ui_MainWindow(object):
 
             self.ui_export.qrcode.setPixmap(pixmap)
             self.ui_export.qrcode.show()
-            while True:
+            self.breakQrThread = False
+            while self.breakQrThread is False:
                 self.custom_cookie = query_login(qrTicket)
                 if self.custom_cookie is not None:
                     break
                 time.sleep(2)
+
+            if self.breakQrThread is True:
+                self.refreshThread = None
+                return
             self.settings.setValue("cookie", self.custom_cookie)
 
         self.isWxLogin = True
+
+        self.ui_export.refresh_qr.hide()
         self.ui_export.qrcode.hide()
         self.ui_export.export_status.setText("进度：未开始")
         self.ui_export.export_status.show()
         self.ui_export.export_status.adjustSize()
-        self.ui_export.login_status.setText("状态：店铺已登录")
+        self.ui_export.login_status.setText(get_info_name(self.custom_cookie))
         self.refreshThread = None
         return self.custom_cookie
