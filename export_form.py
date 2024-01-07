@@ -119,5 +119,5 @@ class Ui_ExportForm(object):
         self.switch_account.setText(_translate("ExportForm", "切换店铺号"))
         self.register_bt.setText(_translate("ExportForm", "注册"))
         self.login_bt.setText(_translate("ExportForm", "登录"))
-        self.remain_point.setText(_translate("ExportForm", "剩余点数：500"))
+        self.remain_point.setText(_translate("ExportForm", "剩余点数：0"))
         self.recharge.setText(_translate("ExportForm", "充值"))

@@ -166,16 +166,25 @@ class Ui_MainWindow(object):
         self.confirm_page.close()
 
         if self.exportThread is None:
-            options = QtWidgets.QFileDialog.Options()
-            options |= QtWidgets.QFileDialog.DontUseNativeDialog
-            fileName, _ = QtWidgets.QFileDialog.getSaveFileName(None, "导出xlsx位置", "",
-                                                                "Text Files (*.xlsx)", options=options)
-            if fileName:
-                fileName = fileName + ".xlsx"
-                print(fileName)
-                self.path = fileName
-                self.exportThread = Thread(target=self.exportData)
-                self.exportThread.start()
+            dialog = QtWidgets.QFileDialog(self.MainWindow)
+            dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
+            dialog.setNameFilter("Text Files (*.xlsx)")
+            dialog.setDefaultSuffix("xlsx")
+
+            # Get the path to the desktop directory
+            desktop_path = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DesktopLocation)
+
+            # Add the desktop path to the sidebar
+            dialog.setSidebarUrls([QtCore.QUrl.fromLocalFile(desktop_path)])
+
+            if dialog.exec_() == QtWidgets.QDialog.Accepted:
+                fileName = dialog.selectedFiles()[0]
+                if fileName:
+                    print(fileName)
+                    self.path = fileName
+                    self.exportThread = Thread(target=self.exportData)
+                    self.exportThread.start()
+
 
     def loginAuto(self):
         self.username = self.settings.value("username", "")
