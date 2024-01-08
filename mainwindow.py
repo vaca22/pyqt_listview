@@ -88,7 +88,8 @@ class Ui_MainWindow(object):
         self.ui_export = Ui_ExportForm()
         self.ui_export.setupUi(self.export_page)
 
-
+        self.ui_export.end_date.setDateTime(QtCore.QDateTime.currentDateTime())
+        self.ui_export.begin_date.setDateTime(QtCore.QDateTime.currentDateTime().addDays(-7))
         self.ui_export.logout.hide()
         self.ui_export.qrcode.setStyleSheet("QLabel { background-color : white; }")
         self.ui_export.label_username.hide()
