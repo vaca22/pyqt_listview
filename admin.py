@@ -1,11 +1,32 @@
 import requests
 import json
 
+from qr_info_class import qr_info_class
 from user_class import UserInfo
 
 # Define the base URL
-# base_url = "http://47.113.180.235:1818/sph_portal/user/"
-base_url = "http://1.14.135.210:8569/sph_portal/user/"
+base_url = "http://47.113.180.235:1818/sph_portal/user/"
+# base_url = "http://1.14.135.210:8569/sph_portal/user/"
+
+
+def getContact():
+    contactResponse = requests.post(
+        f"{base_url}getContact",
+    )
+    json_data = json.loads(contactResponse.text)
+    body = json_data["body"]
+    resultCode = body["resultCode"]
+    if resultCode == "1000":
+        resultData = body["data"]
+        img = resultData["img"]
+        content = resultData["content"]
+        print(img)
+        print(content)
+        contact = qr_info_class(img, content)
+        return contact
+    else:
+        return None
+
 
 def register(account, pwd, tel):
     register_response = requests.post(
@@ -84,4 +105,3 @@ def use_point(userId, token, point):
         return True
     else:
         return False
-

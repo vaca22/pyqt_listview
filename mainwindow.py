@@ -20,7 +20,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
 from QRCodeWindow import QRCodeWindow
-from admin import register, login_admin, use_point
+from admin import register, login_admin, use_point, getContact
 from confirm_dialog import Ui_ConfirmPop
 from cookies_convert import cookie_dict_to_str
 from export_form import Ui_ExportForm
@@ -154,7 +154,11 @@ class Ui_MainWindow(object):
 
     def rechargeClick(self):
         print("recharge")
-        qr_widget = QRCodeWindow("https://u.wechat.com/MAw0cyotVPHgK2pDtehv9-w",self.MainWindow)
+        qr_info= getContact()
+        if qr_info is None:
+            QMessageBox.warning(self.export_page, "提示", "获取信息失败")
+            return
+        qr_widget = QRCodeWindow(qr_info.img,qr_info.content,self.MainWindow)
         qr_widget.show()
 
     def export_pop(self):
