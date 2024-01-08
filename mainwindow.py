@@ -255,7 +255,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "订单导出助手"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "订单导出助手 v2.3"))
 
 
     def logoutClick(self):
