@@ -15,7 +15,8 @@ import requests
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QDateTime
+from PyQt5.QtCore import QDateTime, Qt
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
 from QRCodeWindow import QRCodeWindow
@@ -88,11 +89,14 @@ class Ui_MainWindow(object):
         self.ui_export.setupUi(self.export_page)
 
 
+        self.ui_export.logout.hide()
+        self.ui_export.qrcode.setStyleSheet("QLabel { background-color : white; }")
+        self.ui_export.label_username.hide()
         self.ui_export.rb1.setChecked(True)
         self.ui_export.export_bt.clicked.connect(self.export_pop)
         self.ui_export.recharge.clicked.connect(self.rechargeClick)
         self.ui_export.switch_account.clicked.connect(self.resetCookie)
-        self.ui_export.refresh_qr.clicked.connect(self.resetCookie)
+        self.ui_export.refresh_qr.clicked.connect(self.resetCookieRefresh)
         self.ui_export.logout.clicked.connect(self.logoutClick)
         self.ui_export.register_bt.clicked.connect(self.registerPopClick)
         self.ui_export.login_bt.clicked.connect(self.loginPopClick)
@@ -197,6 +201,9 @@ class Ui_MainWindow(object):
         if self.userData is not None:
             print("login success")
             self.isUserLogin = True
+            self.ui_export.label_username.setText(f"用户名：{self.username}")
+            self.ui_export.label_username.show()
+            self.ui_export.logout.show()
             self.ui_export.frame_unlogin.hide()
             self.settings.setValue("username", self.username)
             self.settings.setValue("password", self.password)
@@ -211,6 +218,8 @@ class Ui_MainWindow(object):
             return True
         else:
             self.isUserLogin = False
+            self.ui_export.label_username.hide()
+            self.ui_export.logout.hide()
             return False
 
     def loginClick(self):
@@ -231,6 +240,9 @@ class Ui_MainWindow(object):
                 self.refreshThread = Thread(target=self.readCookies)
                 self.refreshThread.start()
             self.isUserLogin = True
+            self.ui_export.label_username.setText(f"用户名：{self.username}")
+            self.ui_export.label_username.show()
+            self.ui_export.logout.show()
             self.ui_export.frame_unlogin.hide()
             self.login_page.close()
         else:
@@ -245,15 +257,29 @@ class Ui_MainWindow(object):
         self.settings.setValue("username", "")
         self.settings.setValue("password", "")
         self.isUserLogin = False
+        self.ui_export.label_username.hide()
+        self.ui_export.logout.hide()
         self.ui_export.frame_unlogin.show()
         QMessageBox.information(self.login_page, "提示", "退出登录成功")
 
-
+    def resetCookieRefresh(self):
+        if self.isWxLogin is True:
+            return
+        self.breakQrThread = True
+        self.isWxLogin = False
+        self.custom_cookie = ""
+        self.settings.setValue("cookie", self.custom_cookie)
+        if self.refreshThread is None:
+            self.refreshThread = Thread(target=self.readCookies)
+            self.refreshThread.start()
+        else:
+            self.refreshThread.join()
+            self.refreshThread = Thread(target=self.readCookies)
+            self.refreshThread.start()
 
     def resetCookie(self):
         self.breakQrThread = True
         self.isWxLogin = False
-        self.ui_export.refresh_qr.show()
         self.custom_cookie = ""
         self.settings.setValue("cookie", self.custom_cookie)
         if self.refreshThread is None:
@@ -406,7 +432,7 @@ class Ui_MainWindow(object):
             pixmap = pixmap.scaled(self.ui_export.qrcode.size(), QtCore.Qt.KeepAspectRatio)
 
             self.ui_export.qrcode.setPixmap(pixmap)
-            self.ui_export.qrcode.show()
+
             self.breakQrThread = False
             while self.breakQrThread is False:
                 self.custom_cookie = query_login(qrTicket)
@@ -419,10 +445,13 @@ class Ui_MainWindow(object):
                 return
             self.settings.setValue("cookie", self.custom_cookie)
 
+            pixmap = QPixmap( self.ui_export.qrcode.size())
+            pixmap.fill(Qt.white)
+            self.ui_export.qrcode.setPixmap(pixmap)
+
         self.isWxLogin = True
 
-        self.ui_export.refresh_qr.hide()
-        self.ui_export.qrcode.hide()
+
         self.ui_export.export_status.setText("进度：未开始")
         self.ui_export.export_status.show()
         self.ui_export.export_status.adjustSize()
@@ -433,5 +462,6 @@ class Ui_MainWindow(object):
     def closeEvent(self):
         print("close")
         self.breakQrThread = True
-        self.refreshThread.join()
+        if self.refreshThread is not None:
+            self.refreshThread.join()
 

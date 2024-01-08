@@ -3,7 +3,7 @@ import json
 
 
 def get_info_name(custom_cookie):
-    return_name = ""
+    return_name = "店铺名："
     url = 'https://channels.weixin.qq.com/shop-faas/mmchannelstradehome/api/home'
     headers = {
         'Connection': 'keep-alive',
@@ -19,12 +19,11 @@ def get_info_name(custom_cookie):
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
-        print("Request was successful.")
         json_data = json.loads(response.text)
         baseInfo = json_data["baseInfo"]
         iconUrl = baseInfo["iconUrl"]
         nickName = baseInfo["nickName"]
-        return_name = nickName
+        return_name += nickName
     else:
         pass
     return return_name
