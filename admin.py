@@ -19,7 +19,6 @@ def getContact():
     if resultCode == "1000":
         resultData = body["data"]
         img = resultData["img"]
-        # img="https://bkimg.cdn.bcebos.com/pic/0dd7912397dda144322fe7e5bdb7d0a20cf48647?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto"
         content = resultData["content"]
         print(img)
         print(content)
