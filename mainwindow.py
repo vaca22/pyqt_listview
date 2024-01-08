@@ -53,6 +53,7 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 500)
         MainWindow.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
+
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.stackedWidget = QtWidgets.QStackedWidget(self.centralwidget)
@@ -428,3 +429,9 @@ class Ui_MainWindow(object):
         self.ui_export.login_status.setText(get_info_name(self.custom_cookie))
         self.refreshThread = None
         return self.custom_cookie
+
+    def closeEvent(self):
+        print("close")
+        self.breakQrThread = True
+        self.refreshThread.join()
+
