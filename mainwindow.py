@@ -277,10 +277,7 @@ class Ui_MainWindow(object):
         if self.refreshThread is None:
             self.refreshThread = Thread(target=self.readCookies)
             self.refreshThread.start()
-        else:
-            self.refreshThread.join()
-            self.refreshThread = Thread(target=self.readCookies)
-            self.refreshThread.start()
+
 
     def resetCookie(self):
         self.breakQrThread = True
@@ -290,10 +287,7 @@ class Ui_MainWindow(object):
         if self.refreshThread is None:
             self.refreshThread = Thread(target=self.readCookies)
             self.refreshThread.start()
-        else:
-            self.refreshThread.join()
-            self.refreshThread = Thread(target=self.readCookies)
-            self.refreshThread.start()
+
 
     def filterTime(self, currentDateTime, status):
         print(currentDateTime)
