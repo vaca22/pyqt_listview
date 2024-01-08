@@ -3,7 +3,7 @@ from io import BytesIO
 import requests
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget, QApplication, QDialog
-import qrcode
+
 
 
 class QRCodeWindow(QDialog):

@@ -6,4 +6,5 @@ pip freeze > requirements.txt
 git add .\requirements.txt -f
 
 pip install -r requirements.txt
+pip install py2exe
 ```
