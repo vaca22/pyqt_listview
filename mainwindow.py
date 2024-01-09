@@ -101,6 +101,7 @@ class Ui_MainWindow(object):
         self.ui_export.logout.clicked.connect(self.logoutClick)
         self.ui_export.register_bt.clicked.connect(self.registerPopClick)
         self.ui_export.login_bt.clicked.connect(self.loginPopClick)
+        self.ui_export.recharge.hide()
 
         self.stackedWidget.addWidget(self.export_page)
 
