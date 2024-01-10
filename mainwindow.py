@@ -328,7 +328,7 @@ class Ui_MainWindow(object):
                     return 3
 
     def exportData(self):
-        init_xml(self.path)
+        init_xml()
         export_num = 0
 
         result = get_order_list(1, None, self.custom_cookie)
