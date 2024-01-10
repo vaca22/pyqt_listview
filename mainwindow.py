@@ -29,6 +29,7 @@ from get_info_name import get_info_name
 from login import Ui_Login_Form
 from order_detail import order_detail
 from order_list import get_order_list
+from pathutils import get_resource_path
 from query_login import query_login
 from register import Ui_Register_Form
 from test_login import test_login
@@ -37,6 +38,7 @@ from xml_save import save_xml, append_xml, init_xml
 
 class Ui_MainWindow(object):
     def __init__(self):
+        self.movie = QtGui.QMovie(get_resource_path("loading.gif"))
         self.isUserLogin = False
         self.isWxLogin = False
         self.breakQrThread = False
@@ -93,7 +95,10 @@ class Ui_MainWindow(object):
         self.ui_export.end_date.setDateTime(QtCore.QDateTime.currentDateTime())
         self.ui_export.begin_date.setDateTime(QtCore.QDateTime.currentDateTime().addDays(-7))
         self.ui_export.logout.hide()
-        self.ui_export.qrcode.setStyleSheet("QLabel { background-color : white; }")
+        # self.ui_export.qrcode.setStyleSheet("QLabel { background-color : white; }")
+        self.ui_export.qrcode.setMovie(self.movie)
+        self.movie.setScaledSize(self.ui_export.qrcode.size())
+        self.movie.start()
         self.ui_export.label_username.hide()
         self.ui_export.rb1.setChecked(True)
         self.ui_export.export_bt.clicked.connect(self.export_pop)
@@ -399,6 +404,8 @@ class Ui_MainWindow(object):
         self.exportThread = None
 
     def readCookies(self):
+        self.ui_export.qrcode.setMovie(self.movie)
+        self.movie.start()
         # print type
         if not test_login(self.custom_cookie):
             self.ui_export.login_status.setText("扫码登录店铺")
@@ -436,7 +443,8 @@ class Ui_MainWindow(object):
 
             # Scale the image to fit the label
             pixmap = pixmap.scaled(self.ui_export.qrcode.size(), QtCore.Qt.KeepAspectRatio)
-
+            self.movie.stop()
+            self.ui_export.qrcode.clear()
             self.ui_export.qrcode.setPixmap(pixmap)
 
             self.breakQrThread = False
@@ -451,8 +459,8 @@ class Ui_MainWindow(object):
                 return
             self.settings.setValue("cookie", self.custom_cookie)
 
-            pixmap = QPixmap( self.ui_export.qrcode.size())
-            pixmap.fill(Qt.white)
+            # pixmap = QPixmap( self.ui_export.qrcode.size())
+            # pixmap.fill(Qt.white)
             self.ui_export.qrcode.setPixmap(pixmap)
 
         self.isWxLogin = True
@@ -462,6 +470,8 @@ class Ui_MainWindow(object):
         self.ui_export.export_status.show()
         self.ui_export.export_status.adjustSize()
         self.ui_export.login_status.setText(get_info_name(self.custom_cookie))
+        self.movie.stop()
+        self.ui_export.qrcode.clear()
         self.refreshThread = None
         return self.custom_cookie
 

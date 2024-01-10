@@ -22,6 +22,8 @@ def auth():
     return code == 0
 
 
+
+
 if __name__ == '__main__':
     init_config()
     if auth() is False:
