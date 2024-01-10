@@ -6,4 +6,6 @@ pip freeze > requirements.txt
 git add .\requirements.txt -f
 
 pip install -r requirements.txt
+
+pyinstaller -F -w main.py --onefile --icon=output.ico --name="订单导出助手v2.3.1"
 ```
