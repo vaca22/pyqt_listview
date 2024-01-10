@@ -21,6 +21,7 @@ from PyQt5.QtWidgets import QMessageBox
 
 from QRCodeWindow import QRCodeWindow
 from admin import register, login_admin, use_point, getContact
+from config import is_proxy, app_name_config
 from confirm_dialog import Ui_ConfirmPop
 from cookies_convert import cookie_dict_to_str
 from export_form import Ui_ExportForm
@@ -102,7 +103,10 @@ class Ui_MainWindow(object):
         self.ui_export.logout.clicked.connect(self.logoutClick)
         self.ui_export.register_bt.clicked.connect(self.registerPopClick)
         self.ui_export.login_bt.clicked.connect(self.loginPopClick)
-        self.ui_export.recharge.hide()
+        if is_proxy is False:
+            self.ui_export.recharge.show()
+        else:
+            self.ui_export.recharge.hide()
 
         self.stackedWidget.addWidget(self.export_page)
 
@@ -257,7 +261,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "订单导出助手 v2.3.1"))
+        app_name=app_name_config
+        MainWindow.setWindowTitle(app_name)
 
 
     def logoutClick(self):

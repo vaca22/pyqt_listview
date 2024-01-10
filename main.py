@@ -5,6 +5,7 @@ import requests
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication,  QDialog
 
+from config import init_config
 from custom_mainwindow import CustomMainwindow
 from mainwindow import Ui_MainWindow
 
@@ -22,6 +23,7 @@ def auth():
 
 
 if __name__ == '__main__':
+    init_config()
     if auth() is False:
         print("认证失败")
         sys.exit(0)
