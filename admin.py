@@ -5,8 +5,8 @@ from qr_info_class import qr_info_class
 from user_class import UserInfo
 
 # Define the base URL
-# base_url = "http://18.162.149.95/sph_portal/user/"
-base_url = "http://1.14.135.210:8569/sph_portal/user/"
+base_url = "http://18.162.149.95/sph_portal/user/"
+# base_url = "http://1.14.135.210:8569/sph_portal/user/"
 
 
 def getContact():
