@@ -88,6 +88,7 @@ class Ui_MainWindow(object):
         self.ui_export = Ui_ExportForm()
         self.ui_export.setupUi(self.export_page)
 
+        self.ui_export.refresh_point.clicked.connect(self.loginAuto)
         self.ui_export.end_date.setDateTime(QtCore.QDateTime.currentDateTime())
         self.ui_export.begin_date.setDateTime(QtCore.QDateTime.currentDateTime().addDays(-7))
         self.ui_export.logout.hide()
@@ -256,7 +257,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "订单导出助手 v2.3"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "订单导出助手 v2.3.1"))
 
 
     def logoutClick(self):
