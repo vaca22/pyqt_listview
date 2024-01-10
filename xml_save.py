@@ -1,11 +1,11 @@
 import openpyxl
-
+import os
 
 
 workbook = openpyxl.Workbook()
 worksheet = workbook.active
 
-def init_xml(path):
+def init_xml():
     global workbook
     global worksheet
 
@@ -19,4 +19,6 @@ def append_xml(orderId, createTime, status, goodsName, productCnt, total_address
 
 def save_xml(path):
     global workbook
+    if os.path.exists(path):
+        os.remove(path)
     workbook.save(path)

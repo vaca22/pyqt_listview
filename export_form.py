@@ -81,7 +81,7 @@ class Ui_ExportForm(object):
         self.switch_account.setGeometry(QtCore.QRect(560, 360, 91, 24))
         self.switch_account.setObjectName("switch_account")
         self.remain_point = QtWidgets.QLabel(ExportForm)
-        self.remain_point.setGeometry(QtCore.QRect(420, 10, 161, 31))
+        self.remain_point.setGeometry(QtCore.QRect(400, 10, 161, 31))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.remain_point.setFont(font)
@@ -112,6 +112,9 @@ class Ui_ExportForm(object):
         font.setPointSize(12)
         self.label_username.setFont(font)
         self.label_username.setObjectName("label_username")
+        self.refresh_point = QtWidgets.QPushButton(ExportForm)
+        self.refresh_point.setGeometry(QtCore.QRect(550, 10, 41, 31))
+        self.refresh_point.setObjectName("refresh_point")
 
         self.retranslateUi(ExportForm)
         QtCore.QMetaObject.connectSlotsByName(ExportForm)
@@ -137,3 +140,4 @@ class Ui_ExportForm(object):
         self.register_bt.setText(_translate("ExportForm", "注册"))
         self.login_bt.setText(_translate("ExportForm", "登录"))
         self.label_username.setText(_translate("ExportForm", "用户名"))
+        self.refresh_point.setText(_translate("ExportForm", "刷新"))
