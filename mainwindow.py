@@ -234,6 +234,7 @@ class Ui_MainWindow(object):
             return True
         else:
             self.isUserLogin = False
+            self.ui_export.remain_point.setText(f"剩余点数：0")
             self.ui_export.label_username.hide()
             self.ui_export.logout.hide()
             return False
@@ -274,6 +275,7 @@ class Ui_MainWindow(object):
         self.settings.setValue("username", "")
         self.settings.setValue("password", "")
         self.isUserLogin = False
+        self.ui_export.remain_point.setText(f"剩余点数：0")
         self.ui_export.label_username.hide()
         self.ui_export.logout.hide()
         self.ui_export.frame_unlogin.show()
