@@ -93,7 +93,11 @@ class Ui_MainWindow(object):
 
         self.ui_export.refresh_point.clicked.connect(self.loginAuto)
         self.ui_export.end_date.setDateTime(QtCore.QDateTime.currentDateTime())
+        # set hours to 23:59:59
+        self.ui_export.end_date.setTime(QtCore.QTime(23, 59, 59))
         self.ui_export.begin_date.setDateTime(QtCore.QDateTime.currentDateTime().addDays(-7))
+        # set hours to 00:00:00
+        self.ui_export.begin_date.setTime(QtCore.QTime(0, 0, 0))
         self.ui_export.logout.hide()
         # self.ui_export.qrcode.setStyleSheet("QLabel { background-color : white; }")
         self.ui_export.qrcode.setMovie(self.movie)
@@ -251,7 +255,11 @@ class Ui_MainWindow(object):
             self.ui_export.remain_point.setText(f"剩余点数：{self.userData.point}")
 
             self.ui_export.end_date.setDateTime(QtCore.QDateTime.currentDateTime())
+            # set hours to 23:59:59
+            self.ui_export.end_date.setTime(QtCore.QTime(23, 59, 59))
             self.ui_export.begin_date.setDateTime(QtCore.QDateTime.currentDateTime().addDays(-7))
+            # set hours to 00:00:00
+            self.ui_export.begin_date.setTime(QtCore.QTime(0, 0, 0))
 
             if self.refreshThread is None:
                 self.refreshThread = Thread(target=self.readCookies)
