@@ -177,6 +177,9 @@ class Ui_MainWindow(object):
         qr_widget.show()
 
     def export_pop(self):
+        # print date time
+        print(self.ui_export.begin_date.dateTime())
+        print(self.ui_export.end_date.dateTime())
         if self.isUserLogin is False:
             QMessageBox.warning(self.export_page, "提示", "请先登录")
             return
@@ -230,7 +233,12 @@ class Ui_MainWindow(object):
             self.ui_export.remain_point.setText(f"剩余点数：{self.userData.point}")
 
             self.ui_export.end_date.setDateTime(QtCore.QDateTime.currentDateTime())
+            # set hours to 23:59:59
+            self.ui_export.end_date.setTime(QtCore.QTime(23, 59, 59))
+
             self.ui_export.begin_date.setDateTime(QtCore.QDateTime.currentDateTime().addDays(-7))
+            # set hours to 00:00:00
+            self.ui_export.begin_date.setTime(QtCore.QTime(0, 0, 0))
 
             if self.refreshThread is None:
                 self.refreshThread = Thread(target=self.readCookies)
