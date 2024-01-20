@@ -369,10 +369,10 @@ class Ui_MainWindow(object):
             totalPage = order.totalPage
             nextKey = order.nextKey
             if order.total_address.find("*") != -1:
-                order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
+                order.name,order.tel,order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
             if self.filterTime(order.createTime, order.status) == 0:
                 append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
-                           order.total_address)
+                           order.name,order.tel,order.total_address)
                 export_num += 1
                 self.userData.point -= 1
                 if self.userData.point <= 0:
@@ -391,12 +391,12 @@ class Ui_MainWindow(object):
                         bizuin = order.bizuin
                     nextKey = order.nextKey
                     if order.total_address.find("*") != -1:
-                        order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
+                        order.name,order.tel,order.total_address = order_detail(order.orderId, bizuin, self.custom_cookie)
                     timeflag = self.filterTime(order.createTime, order.status)
                     print("timeflag", timeflag)
                     if timeflag == 0:
                         append_xml(order.orderId, order.createTime, order.status, order.goodsName, order.productCnt,
-                                   order.total_address)
+                                  order.name,order.tel, order.total_address)
                         export_num += 1
                         self.userData.point -= 1
                         if self.userData.point <= 0:

@@ -1,11 +1,14 @@
 import datetime
 
 import requests
+
 requests.packages.urllib3.disable_warnings()
 import requests
 import json
 
 from save_class import Order
+
+
 def find_key(data, target_key):
     queue = [data]
     while len(queue) > 0:
@@ -19,7 +22,6 @@ def find_key(data, target_key):
         elif type(current) == list:
             queue.extend(current)
     return None
-
 
 
 def get_order_list(page_num, nextKey=None, custom_cookie=None):
@@ -76,12 +78,13 @@ def get_order_list(page_num, nextKey=None, custom_cookie=None):
         detailInfo = addressInfo["detailInfo"]
         nationalCode = addressInfo["nationalCode"]
         telNumber = addressInfo["telNumber"]
-        total_address = userName + " " + telNumber + " " + provinceName + cityName + countyName + detailInfo
+        total_address = provinceName + cityName + countyName + detailInfo
         list_product = order["list"]
         for product in list_product:
             goodsName = product["title"]
             productCnt = product["productCnt"]
-            temp = Order(orderId, createTime, status, goodsName, productCnt, total_address, nextKey, bizuin, totalPage,
+            temp = Order(orderId, createTime, status, goodsName, productCnt, userName, telNumber, total_address,
+                         nextKey, bizuin, totalPage,
                          totalNum)
             result.append(temp)
 

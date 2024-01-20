@@ -54,5 +54,5 @@ def order_detail(orderid, appUin, custom_cookie=None):
     nationalCode = addressInfo["nationalCode"]
     telNumber = addressInfo["telNumber"]
 
-    total_address = userName + " " + telNumber + " " + provinceName + cityName + countyName + detailInfo
-    return total_address
+    total_address = provinceName + cityName + countyName + detailInfo
+    return userName,telNumber,total_address
